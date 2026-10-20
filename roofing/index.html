@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ridgeline Roofing Site Agent</title>
+<meta name="description" content="Demo: a website chat agent for a roofing company that answers from the company's own knowledge base, shows its sources and books inspections.">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&display=swap">
+<style>
+/* Layout: the client's real-looking marketing site, with the chat widget on top and an
+   optional "how it works" drawer that exposes retrieval, guardrails and the lead record. */
+:root {
+  --brick: #a8402b; --brick-ink: #ffffff; --slate: #1f2b36; --slate-2: #2c3b48; --sand: #f3efe8; --sand-2: #e7e0d4;
+  --accent: #a8402b; --accent-soft: #f6e4df;
+  --display: "Archivo", "Arial Narrow", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sand: #1b1f22; --sand-2: #262b30; --accent: #e07a62; --accent-soft: #3a211b; --accent-ink: #1a0f0c; } }
+:root[data-theme="dark"] { --sand: #1b1f22; --sand-2: #262b30; --accent: #e07a62; --accent-soft: #3a211b; --accent-ink: #1a0f0c; }
+
+.site { background: var(--sand); color: var(--ink); }
+.wrap { max-width: 1160px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.util { background: var(--slate); color: #d9e0e6; font-size: 13px; }
+.util .wrap { display: flex; justify-content: space-between; gap: 12px; padding-block: 7px; flex-wrap: wrap; }
+.util b { color: #fff; }
+nav.main { background: var(--surface); border-bottom: 1px solid var(--line); }
+nav.main .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; flex-wrap: wrap; }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: 22px; letter-spacing: .01em; text-decoration: none; }
+.logo svg { width: 34px; height: 24px; }
+.links { display: flex; gap: 22px; font-weight: 500; flex-wrap: wrap; }
+.links a { text-decoration: none; color: var(--ink-2); }
+.cta { background: var(--brick); color: var(--brick-ink); border: 0; height: 40px; padding: 0 16px; border-radius: 4px; font-weight: 600; cursor: pointer; }
+
+.hero { background: var(--slate); color: #fff; position: relative; overflow: hidden; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 40px; padding-block: 64px 0; align-items: end; }
+.hero h1 { font-family: var(--display); font-stretch: 78%; font-weight: 800; font-size: clamp(40px, 6vw, 70px); line-height: .95; margin: 0 0 18px; text-wrap: balance; letter-spacing: -.005em; }
+.hero p { font-size: 17px; color: #c9d3dc; max-width: 520px; margin: 0 0 24px; }
+.hero .row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+.ghost { background: transparent; color: #fff; border: 1px solid #5d7080; height: 40px; padding: 0 16px; border-radius: 4px; font-weight: 600; cursor: pointer; }
+.roofart { width: 100%; height: auto; display: block; }
+.alert { background: #f3c66b; color: #2a1f05; font-weight: 600; font-size: 13.5px; }
+.alert .wrap { padding-block: 9px; }
+
+.trust { border-bottom: 1px solid var(--sand-2); }
+.trust .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; padding-block: 22px; }
+.trust b { font-family: var(--display); font-stretch: 80%; font-size: 26px; display: block; }
+.trust span { color: var(--ink-2); font-size: 13px; }
+
+.services .wrap { padding-block: 56px; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 48px; }
+.services h2 { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: 36px; line-height: 1; margin: 0 0 12px; }
+.svc-list { display: grid; gap: 0; border-top: 2px solid var(--ink); }
+.svc-list div { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; padding: 16px 0; border-bottom: 1px solid var(--sand-2); }
+.svc-list h3 { margin: 0; font-size: 17px; }
+.svc-list p { margin: 0; grid-column: 1; color: var(--ink-2); }
+.svc-list span { color: var(--ink-3); font-size: 13px; grid-row: 1; grid-column: 2; }
+footer.f { background: var(--slate); color: #b9c4ce; font-size: 13px; }
+footer.f .wrap { padding-block: 28px 120px; display: flex; gap: 24px; justify-content: space-between; flex-wrap: wrap; }
+
+/* ---------- Chat widget ---------- */
+.launcher { position: fixed; right: max(20px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); z-index: 30; height: 48px; padding: 0 18px 0 14px; border-radius: 24px; border: 0; background: var(--brick); color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 6px 20px rgba(20, 20, 20, .25); }
+.widget { position: fixed; right: max(20px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 80px); z-index: 31; width: 380px; max-width: calc(100vw - 32px); height: min(620px, calc(100vh - 120px)); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 50px rgba(15, 20, 25, .28); display: flex; flex-direction: column; overflow: hidden; font-family: var(--font); }
+.w-head { background: var(--slate); color: #fff; padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+.w-head .av { width: 32px; height: 32px; border-radius: 50%; background: var(--brick); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+.w-head b { display: block; font-size: 14px; }
+.w-head small { color: #b9c6d1; font-size: 12px; }
+.w-head .x { margin-left: auto; background: none; border: 0; color: #fff; font-size: 20px; cursor: pointer; width: 30px; height: 30px; }
+.w-body { flex: 1; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+.msg { max-width: 88%; padding: 9px 12px; border-radius: 12px; font-size: 13.5px; line-height: 1.45; }
+.msg.bot { background: var(--surface); border: 1px solid var(--line); align-self: flex-start; border-bottom-left-radius: 4px; }
+.msg.me { background: var(--slate); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+:root[data-theme="dark"] .msg.me { background: var(--slate-2); }
+.srcs { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+.srcs span { font-size: 11.5px; color: var(--ink-2); background: var(--sunken); border-radius: 4px; padding: 2px 6px; }
+.typing { align-self: flex-start; color: var(--ink-3); font-size: 12.5px; }
+.sugg { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 14px 10px; background: var(--bg); }
+.sugg button { font-size: 12.5px; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 14px; padding: 5px 10px; cursor: pointer; }
+.w-foot { border-top: 1px solid var(--line); padding: 10px; display: flex; gap: 8px; background: var(--surface); }
+.w-foot .input { height: 38px; border-radius: 19px; padding: 0 14px; }
+.w-foot .btn { height: 38px; border-radius: 19px; }
+.leadform { display: grid; gap: 7px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; align-self: stretch; }
+.leadform label { font-size: 12px; color: var(--ink-2); display: grid; gap: 3px; }
+.leadform .err { color: var(--bad); font-size: 12px; min-height: 0; }
+.w-meta { font-size: 11.5px; color: var(--ink-3); text-align: center; padding: 6px; background: var(--surface); }
+.w-meta button { background: none; border: 0; text-decoration: underline; color: var(--ink-2); cursor: pointer; font-size: 11.5px; }
+
+/* ---------- How it works drawer ---------- */
+.drawer { position: fixed; top: 0; left: 0; bottom: 0; width: min(420px, 100vw); z-index: 40; background: var(--surface); border-right: 1px solid var(--line); box-shadow: 10px 0 40px rgba(0,0,0,.18); overflow: auto; font-family: var(--font); padding-top: env(safe-area-inset-top, 0px); }
+.drawer header { position: sticky; top: 0; background: var(--surface); padding: 14px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.drawer h2 { margin: 0; font-size: 15px; }
+.drawer h3 { margin: 18px 16px 8px; font-size: 12.5px; color: var(--ink-3); font-weight: 600; }
+.dq { margin: 0 16px; padding: 8px 10px; background: var(--sunken); border-radius: var(--r-sm); font-size: 13px; }
+.hits { margin: 0 16px; display: grid; gap: 6px; }
+.hit { border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px 10px; font-size: 12.5px; display: grid; gap: 4px; }
+.hit .row { display: flex; justify-content: space-between; gap: 8px; }
+.bar { height: 4px; background: var(--sunken); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.hit.used { border-color: var(--accent); }
+.kv { margin: 0 16px; display: grid; grid-template-columns: 90px 1fr; gap: 5px 10px; font-size: 13px; }
+.kv dt { color: var(--ink-3); } .kv dd { margin: 0; overflow-wrap: anywhere; }
+.drawer .note { margin: 6px 16px 0; font-size: 12.5px; color: var(--ink-2); }
+
+@media (max-width: 860px) {
+  .hero .wrap, .services .wrap { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .hero .wrap { padding-block: 40px 0; }
+  .roofart { max-width: 420px; }
+  .trust .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .links { display: none; }
+}
+@media (max-width: 480px) {
+  .widget { right: 8px; left: 8px; width: auto; max-width: none; bottom: calc(env(safe-area-inset-bottom, 0px) + 76px); height: calc(100vh - 150px); }
+}
+</style>
+</head>
+<body>
+<div class="demo-bar"><span>Demo build by Arav Bazar. Ridgeline is a fictional roofer; the site and knowledge base are sample content.</span><a href="../">See all projects</a></div>
+
+<div class="site">
+  <div class="util"><div class="wrap"><span>Serving Round Rock, Georgetown, Cedar Park and North Austin</span><span>Call or text <b>(512) 555-0186</b></span></div></div>
+  <nav class="main"><div class="wrap">
+    <a class="logo" href="#top"><svg viewBox="0 0 34 24" aria-hidden="true"><path d="M1 18 L17 4 L33 18" fill="none" stroke="var(--brick)" stroke-width="4" stroke-linejoin="round"/><path d="M8 22 L17 14 L26 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>RIDGELINE ROOFING</a>
+    <div class="links"><a href="#svc">Roof replacement</a><a href="#svc">Storm damage</a><a href="#svc">Repairs</a><a href="#svc">Gutters</a><a href="#svc">Financing</a></div>
+    <button class="cta" type="button" data-open-chat>Free inspection</button>
+  </div></nav>
+  <div class="alert"><div class="wrap">Hail hit parts of Round Rock and Georgetown on Oct 14. We're booking free storm inspections within 48 hours.</div></div>
+
+  <section class="hero" id="top"><div class="wrap">
+    <div>
+      <h1>Roofs that make it through a Texas spring.</h1>
+      <p>Family-owned since 2009. Replacements, storm repairs and insurance claims handled start to finish by our own crews, not subcontractors.</p>
+      <div class="row"><button class="cta" type="button" data-open-chat>Book a free inspection</button><button class="ghost" type="button" data-ask="How does the insurance claim process work?">How insurance claims work</button></div>
+    </div>
+    <svg class="roofart" viewBox="0 0 480 300" role="img" aria-label="Illustration of a house roofline">
+      <rect x="0" y="0" width="480" height="300" fill="var(--slate)"/>
+      <path d="M40 300 V170 L240 40 L440 170 V300 Z" fill="var(--slate-2)"/>
+      <path d="M20 182 L240 32 L460 182" fill="none" stroke="var(--brick)" stroke-width="18" stroke-linejoin="miter"/>
+      <g stroke="#3d4f5e" stroke-width="2" fill="none">
+        <path d="M80 160 L240 56 L400 160"/><path d="M100 176 L240 82 L380 176"/><path d="M120 192 L240 108 L360 192"/><path d="M140 208 L240 134 L340 208"/>
+      </g>
+      <rect x="196" y="210" width="88" height="90" fill="#151e27"/>
+      <rect x="92" y="218" width="64" height="50" fill="#3a4c5b"/><rect x="324" y="218" width="64" height="50" fill="#3a4c5b"/>
+    </svg>
+  </div></section>
+
+  <section class="trust"><div class="wrap">
+    <div><b>4.9 / 5</b><span>from 380+ Google reviews</span></div>
+    <div><b>6,200+</b><span>roofs installed since 2009</span></div>
+    <div><b>25-year</b><span>workmanship warranty</span></div>
+    <div><b>48 hours</b><span>to inspect after a storm</span></div>
+  </div></section>
+
+  <section class="services" id="svc"><div class="wrap">
+    <div><h2>What we do</h2><p class="muted">Not sure what you need? Ask the assistant in the corner. It answers from our own guides and can book an inspection.</p></div>
+    <div class="svc-list">
+      <div><h3>Full roof replacement</h3><p>Asphalt shingle, standing-seam metal and concrete tile. Most homes done in one to two days.</p><span>From $9,500</span></div>
+      <div><h3>Storm and hail damage</h3><p>Free inspection, photo report and help filing your claim with your insurance company.</p><span>Free inspection</span></div>
+      <div><h3>Roof repairs</h3><p>Leaks, missing shingles, flashing and vent boots. Emergency tarping when it can't wait.</p><span>From $350</span></div>
+      <div><h3>Gutters and guards</h3><p>Seamless aluminum gutters made on site, in 20 colors.</p><span>From $1,200</span></div>
+    </div>
+  </div></section>
+  <footer class="f"><div class="wrap"><span>Ridgeline Roofing &amp; Exteriors, 1801 N Mays St, Round Rock, TX</span><span>Mon to Sat, 7am to 6pm</span></div></footer>
+</div>
+
+<button class="launcher" id="launcher" type="button" aria-expanded="false" hidden><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Questions? Ask us</button>
+
+<section class="widget" id="widget" aria-label="Chat with Ridgeline">
+  <div class="w-head"><div class="av" aria-hidden="true">R</div><div><b>Ridgeline Assistant</b><small>Answers from Ridgeline's own guides</small></div><button class="x" id="closeChat" type="button" aria-label="Minimize chat">&#8211;</button></div>
+  <div class="w-body" id="wbody" aria-live="polite"></div>
+  <div class="sugg" id="sugg"></div>
+  <form class="w-foot" id="wform" autocomplete="off"><label class="sr" for="wq">Message</label><input class="input" id="wq" placeholder="Ask about storms, costs, insurance"><button class="btn primary">Send</button></form>
+  <div class="w-meta">Demo agent. <button type="button" id="howBtn">See how it decided</button></div>
+</section>
+
+<aside class="drawer" id="drawer" hidden aria-label="How the assistant decided">
+  <header><h2>How it decided</h2><button class="btn sm" id="closeDrawer" type="button">Close</button></header>
+  <h3>Last question</h3><div class="dq" id="dq">Ask something in the chat.</div>
+  <h3>Retrieved from the knowledge base</h3><div class="hits" id="hits"></div>
+  <h3>Guardrail</h3><p class="note" id="guard">Waiting for a question.</p>
+  <h3>Lead record</h3><dl class="kv" id="lead"></dl>
+  <p class="note" id="leadNote">Created when a visitor asks to book. Sent to the CRM with the topics they asked about.</p>
+</aside>
+
+<script>
+(() => {
+  // ---------- Knowledge base (what the company wrote; the agent may only answer from this) ----------
+  const KB = [
+    { id: "storm-process", t: "After a hail or wind storm", k: "hail storm wind damage after dented shingles granules check roof missing what do i do",
+      a: "After a storm, look for dented gutters, shingle granules in your downspouts or missing shingles, but don't climb on the roof. We do free storm inspections within 48 hours and give you a photo report you can send to your insurance company." },
+    { id: "insurance", t: "Insurance claims", k: "insurance claim adjuster deductible covered cover pay file claim process policy",
+      a: "We inspect first and tell you honestly whether the damage is worth a claim. If it is, you file with your insurer, we meet the adjuster on your roof and send them our photo report. You pay only your deductible on covered work. Whether it's covered is always your insurer's decision." },
+    { id: "cost", t: "What a new roof costs", k: "cost price how much replacement replace new roof estimate quote expensive average per square",
+      a: "Most full replacements in our area run $9,500 to $18,000 for asphalt shingles, $22,000 to $38,000 for standing-seam metal, and more for tile. Your exact price depends on roof size, pitch and layers to tear off, so we give a written quote after the free inspection." },
+    { id: "repair-cost", t: "Repair pricing", k: "repair leak fix small patch missing shingle flashing vent boot cost price",
+      a: "Most repairs, like replacing missing shingles, flashing or a vent boot, run $350 to $1,500. We quote on site before any work starts." },
+    { id: "timeline", t: "How long it takes", k: "how long take time days timeline schedule when start finish one day",
+      a: "Most replacements take one to two days once materials arrive. Right now we're scheduling installs about two to three weeks out. Inspections are within 48 hours." },
+    { id: "materials", t: "Shingle, metal or tile", k: "material shingle asphalt metal standing seam tile best which type lifespan class 4 impact",
+      a: "Class 4 impact-rated asphalt shingles are the most popular here and often lower your premium. Standing-seam metal costs more but lasts 40 to 60 years and handles hail well. Concrete tile suits Spanish-style homes." },
+    { id: "warranty", t: "Warranty", k: "warranty guarantee coverage years manufacturer workmanship",
+      a: "Every replacement includes our 25-year workmanship warranty plus the manufacturer's material warranty, which is lifetime on most of the shingles we install." },
+    { id: "financing", t: "Financing", k: "finance financing payment plan monthly afford credit loan pay over time",
+      a: "We offer financing with approved credit, including 12 months same-as-cash and longer plans. Checking your options doesn't affect your credit score." },
+    { id: "area", t: "Service area", k: "area serve service location where come out cities round rock georgetown cedar park pflugerville hutto leander austin",
+      a: "We serve Round Rock, Georgetown, Cedar Park, Leander, Hutto, Pflugerville and North Austin. Outside that, ask and we'll tell you honestly if we can get there." },
+    { id: "emergency", t: "Emergency leaks", k: "emergency leak leaking now tarp water coming in ceiling urgent tonight",
+      a: "If water is coming in now, call or text (512) 555-0186. We do emergency tarping the same day when crews are available, and move valuables away from the leak until we get there." },
+    { id: "inspection", t: "Free inspection", k: "free inspection estimate come out look book schedule appointment visit quote someone",
+      a: "Inspections are free and take about 45 minutes. You don't need to be home if we can reach the roof safely. You get a photo report either way." },
+    { id: "gutters", t: "Gutters", k: "gutter gutters guards downspout seamless clog",
+      a: "We install seamless aluminum gutters made on site in 20 colors, starting around $1,200 for a typical home. Gutter guards are an add-on." },
+    { id: "hoa", t: "Permits and HOAs", k: "permit hoa homeowners association approval color city code",
+      a: "We pull the city permit and can send your HOA the color and material specs they ask for. HOA approval usually takes about a week." },
+    { id: "payment", t: "When you pay", k: "deposit pay upfront payment when due",
+      a: "No money up front on insurance jobs. On retail jobs we take a deposit when materials are ordered and the balance after the final walkthrough." }
+  ];
+  const STOP = new Set("a an the is are do does i my me you your we our it of to for and or in on at what how can will be if this that with have has get about any roof last week should house home would much did".split(" "));
+  const tok = s => s.toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w && !STOP.has(w)).map(w => w.replace(/(ing|es|s)$/,""));
+  const docs = KB.map(d => tok(d.t + " " + d.t + " " + d.k + " " + d.k + " " + d.a));
+  const avg = docs.reduce((a, d) => a + d.length, 0) / docs.length;
+  const df = {}; docs.forEach(d => new Set(d).forEach(w => df[w] = (df[w] || 0) + 1));
+  function bm25(q) {
+    const qs = tok(q); const N = docs.length;
+    return KB.map((d, i) => {
+      let s = 0; const tf = {}; docs[i].forEach(w => tf[w] = (tf[w] || 0) + 1);
+      qs.forEach(w => { if (!tf[w]) return; const idf = Math.log(1 + (N - df[w] + .5) / (df[w] + .5)); s += idf * (tf[w] * 2.2) / (tf[w] + 1.2 * (1 - .75 + .75 * docs[i].length / avg)); });
+      return { d, s };
+    }).sort((a, b) => b.s - a.s);
+  }
+  const THRESH = 2.2;
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const lead = { name: "", phone: "", address: "", topics: new Set(), status: "Not started", score: 0 };
+  let busy = false, formShown = false;
+
+  function addMsg(who, html, srcs) {
+    const m = document.createElement("div"); m.className = "msg " + who; m.innerHTML = html;
+    if (srcs && srcs.length) m.innerHTML += `<div class="srcs">${srcs.map(s => `<span>Source: ${esc(s)}</span>`).join("")}</div>`;
+    $("wbody").appendChild(m); $("wbody").scrollTop = $("wbody").scrollHeight; return m;
+  }
+  function think() { const t = document.createElement("div"); t.className = "typing"; t.textContent = "Ridgeline Assistant is typing"; $("wbody").appendChild(t); $("wbody").scrollTop = $("wbody").scrollHeight; return t; }
+  function renderLead() {
+    const rows = { Status: lead.status, Name: lead.name || "Not given", Phone: lead.phone || "Not given", Address: lead.address || "Not given", Interested: [...lead.topics].join(", ") || "None yet", Score: lead.score ? lead.score + " / 100" : "Not scored" };
+    $("lead").innerHTML = Object.entries(rows).map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
+  }
+  function showHits(q, ranked, used, guard) {
+    $("dq").textContent = q;
+    const top = ranked[0].s || 1;
+    $("hits").innerHTML = ranked.slice(0, 3).map(r => `<div class="hit ${used.includes(r.d.id) ? "used" : ""}"><div class="row"><b>${esc(r.d.t)}</b><span class="muted">${r.s.toFixed(2)}</span></div><div class="bar"><i style="width:${Math.max(3, r.s / Math.max(top, THRESH * 2) * 100)}%"></i></div><span class="muted">${used.includes(r.d.id) ? "Used in the answer" : r.s < THRESH ? "Below the confidence cutoff (" + THRESH + ")" : "Retrieved, not needed"}</span></div>`).join("");
+    $("guard").textContent = guard;
+  }
+  const SUGG = ["Hail hit my house last week, what should I do?", "How much does a new roof cost?", "Will insurance pay for it?", "Do you come out to Hutto?", "Can you guarantee my claim gets approved?", "Book me a free inspection"];
+  function renderSugg(list) { $("sugg").innerHTML = list.map(s => `<button type="button">${esc(s)}</button>`).join(""); }
+
+  async function ask(q) {
+    if (busy || !q.trim()) return; busy = true;
+    addMsg("me", esc(q));
+    const t = think(); await new Promise(r => setTimeout(r, 650));
+    t.remove();
+    const lq = q.toLowerCase();
+    const ranked = bm25(q);
+    let html, srcs = [], used = [], guard;
+
+    if ((/\b(book|schedule|set up|sign me up|send someone)\b/.test(lq) || /\b(want|need|get|request|like)\b.*\b(inspection|quote|estimate|appointment)\b/.test(lq)) && !/\bhow (long|much)\b/.test(lq)) {
+      lead.topics.add("Inspection"); guard = "Booking intent detected, so the agent switches to collecting contact details instead of answering.";
+      showHits(q, ranked, [], guard);
+      html = "Happy to set that up. Inspections are free and take about 45 minutes. I just need a few details and the office will text you a time within the hour.";
+      addMsg("bot", html); showForm(); busy = false; return;
+    }
+    if (/\b(guarantee|promise|definitely|approve|approved|100%)\b/.test(lq)) {
+      guard = "Blocked a promise. The agent won't guarantee claim outcomes or prices; it states what the company actually commits to.";
+      const ins = KB.find(d => d.id === "insurance"); used = ["insurance"]; srcs = [ins.t];
+      html = "I can't promise a claim will be approved. That's always your insurance company's decision. What we can promise is an honest inspection, a photo report, and that we'll meet the adjuster on your roof.";
+      showHits(q, ranked, used, guard);
+    } else if (/\b(exact|my roof|my house)\b/.test(lq) && /\b(cost|price|how much)\b/.test(lq)) {
+      guard = "No exact quote without an inspection. The agent gives the published range and offers the inspection.";
+      used = ["cost"]; srcs = ["What a new roof costs"];
+      html = esc(KB.find(d => d.id === "cost").a) + " Want me to set up the free inspection?";
+      showHits(q, ranked, used, guard);
+    } else if (ranked[0].s < THRESH) {
+      guard = `Top match scored ${ranked[0].s.toFixed(2)}, under the ${THRESH} cutoff. The agent says it doesn't know instead of guessing.`;
+      showHits(q, ranked, [], guard);
+      html = "I don't have a good answer for that in our guides, and I'd rather not guess. Want me to have someone from the office call or text you?";
+    } else {
+      const picks = [ranked[0]]; if (ranked[1] && ranked[1].s > THRESH && ranked[1].s > ranked[0].s * .72) picks.push(ranked[1]);
+      used = picks.map(p => p.d.id); srcs = picks.map(p => p.d.t);
+      picks.forEach(p => lead.topics.add(p.d.t));
+      guard = `Answered from ${picks.length} knowledge base ${picks.length > 1 ? "entries" : "entry"} above the ${THRESH} cutoff. Nothing outside them was added.`;
+      html = picks.map(p => esc(p.d.a)).join(" ");
+      if (!formShown && /storm|insurance|cost|inspection/.test(used.join(" "))) html += " Want me to book a free inspection?";
+      showHits(q, ranked, used, guard);
+    }
+    addMsg("bot", html, srcs);
+    lead.score = Math.min(100, 20 + lead.topics.size * 15 + (lead.phone ? 30 : 0)); if (lead.status === "Not started" && lead.topics.size) lead.status = "Browsing";
+    renderLead(); busy = false;
+  }
+
+  function showForm() {
+    if (formShown) return; formShown = true;
+    const f = document.createElement("form"); f.className = "leadform"; f.noValidate = true;
+    f.innerHTML = `<label>Name<input class="input" id="lf-name" autocomplete="name"></label>
+      <label>Mobile number<input class="input" id="lf-phone" inputmode="tel" autocomplete="tel"></label>
+      <label>Property address<input class="input" id="lf-addr" autocomplete="street-address"></label>
+      <div class="err" id="lf-err"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary">Request inspection</button><button class="btn" type="button" id="lf-fill">Fill sample details</button></div>`;
+    $("wbody").appendChild(f); $("wbody").scrollTop = $("wbody").scrollHeight;
+    $("lf-fill").onclick = () => { $("lf-name").value = "Chris Morales"; $("lf-phone").value = "512-555-0127"; $("lf-addr").value = "1408 Sundance Ridge Dr, Round Rock"; };
+    f.onsubmit = e => {
+      e.preventDefault();
+      const n = $("lf-name").value.trim(), p = $("lf-phone").value.replace(/\D/g, ""), a = $("lf-addr").value.trim();
+      if (!n || p.length < 10 || a.length < 6) { $("lf-err").textContent = "Add your name, a 10-digit mobile number and the property address."; return; }
+      const area = /round rock|georgetown|cedar park|leander|hutto|pflugerville|austin/i.test(a);
+      Object.assign(lead, { name: n, phone: "(" + p.slice(-10, -7) + ") " + p.slice(-7, -4) + "-" + p.slice(-4), address: a });
+      lead.status = area ? "Sent to CRM" : "Sent to CRM, outside service area"; lead.score = Math.min(100, 45 + lead.topics.size * 12 + (area ? 15 : 0));
+      f.querySelectorAll("input,button").forEach(x => x.disabled = true);
+      addMsg("bot", `Thanks, ${esc(n.split(" ")[0])}. You're on the list for a free inspection${area ? "" : " (you're a bit outside our usual area, so the office will confirm)"}. You'll get a text at ${esc(lead.phone)} with a time. If water is coming in right now, call (512) 555-0186.`);
+      $("guard").textContent = "Lead validated (phone length, address present, service area checked) before it was sent to the CRM.";
+      renderLead();
+    };
+  }
+
+  // ---------- Wiring ----------
+  function openChat(open) { $("widget").hidden = !open; $("launcher").hidden = open; $("launcher").setAttribute("aria-expanded", open); if (open) $("wq").focus({ preventScroll: true }); }
+  $("closeChat").onclick = () => openChat(false);
+  $("launcher").onclick = () => openChat(true);
+  document.querySelectorAll("[data-open-chat]").forEach(b => b.onclick = () => { openChat(true); ask("Book me a free inspection"); });
+  document.querySelectorAll("[data-ask]").forEach(b => b.onclick = () => { openChat(true); ask(b.dataset.ask); });
+  $("wform").onsubmit = e => { e.preventDefault(); const v = $("wq").value; $("wq").value = ""; ask(v); };
+  $("sugg").onclick = e => { const b = e.target.closest("button"); if (b) { const used = b.textContent; ask(used); SUGG.splice(SUGG.indexOf(used), 1); renderSugg(SUGG.slice(0, 3)); } };
+  $("howBtn").onclick = () => $("drawer").hidden = false;
+  $("closeDrawer").onclick = () => $("drawer").hidden = true;
+
+  addMsg("bot", "Hi, I'm Ridgeline's assistant. I can answer questions about storm damage, insurance, pricing and timelines from our own guides, or book a free inspection.");
+  renderSugg(SUGG.slice(0, 3)); renderLead();
+  if (window.innerWidth < 700) openChat(false);
+  window.__demo = { ask };
+})();
+</script>
+</body>
+</html>

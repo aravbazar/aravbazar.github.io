@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pecan Street Text-Back</title>
+<meta name="description" content="Demo: missed-call text-back and review requests for a plumbing company, shown from the customer's phone and the owner's log side by side.">
+<link rel="stylesheet" href="../assets/base.css">
+<style>
+/* Layout: the customer's phone on the left, the owner's view (triggers, rules, log) on the right. */
+:root { --accent: #8a5a2b; --accent-soft: #f3e9de; --me: #2a6fdb; --them: #e7e9ec; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --accent: #d39a62; --accent-soft: #352617; --accent-ink: #1d1208; --them: #2a2e33; --me: #3f80e6; } }
+:root[data-theme="dark"] { --accent: #d39a62; --accent-soft: #352617; --accent-ink: #1d1208; --them: #2a2e33; --me: #3f80e6; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; }
+.head { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; align-items: end; margin-bottom: 20px; }
+.head h1 { margin: 0; font-size: 22px; }
+.head p { margin: 4px 0 0; color: var(--ink-2); max-width: 620px; }
+.grid { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 28px; align-items: start; }
+
+.phone { width: 340px; max-width: 100%; margin: 0 auto; border: 10px solid #1c1f23; border-radius: 42px; background: var(--surface); overflow: hidden; height: 680px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,.18); position: sticky; top: 16px; }
+.status { display: flex; justify-content: space-between; padding: 10px 22px 4px; font-size: 12px; font-weight: 600; }
+.thead { text-align: center; padding: 6px 0 10px; border-bottom: 1px solid var(--line); }
+.thead .av { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; margin: 0 auto 4px; font-weight: 700; }
+.thead b { font-size: 13px; } .thead small { display: block; font-size: 11px; color: var(--ink-3); }
+.thread { flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.b { max-width: 78%; padding: 8px 12px; border-radius: 18px; font-size: 14px; line-height: 1.35; }
+.b.them { background: var(--them); align-self: flex-start; border-bottom-left-radius: 6px; }
+.b.me { background: var(--me); color: #fff; align-self: flex-end; border-bottom-right-radius: 6px; }
+.sysline { align-self: center; font-size: 11.5px; color: var(--ink-3); text-align: center; padding: 4px 0; }
+.missed { align-self: center; font-size: 12px; color: var(--bad); display: flex; gap: 6px; align-items: center; padding: 4px 0; }
+.compose { display: flex; gap: 6px; padding: 8px 10px 14px; border-top: 1px solid var(--line); }
+.compose .input { border-radius: 18px; height: 36px; }
+.compose .btn { border-radius: 18px; height: 36px; }
+.quick { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 10px 6px; }
+.quick button { font-size: 12px; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 12px; padding: 4px 9px; cursor: pointer; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); margin-bottom: 16px; }
+.card h2 { margin: 0; font-size: 13.5px; padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.triggers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 14px; }
+.trig { border: 1px solid var(--line-strong); background: var(--surface); border-radius: var(--r-md); padding: 10px 12px; text-align: left; cursor: pointer; display: grid; gap: 3px; }
+.trig:hover { background: var(--sunken); }
+.trig b { font-size: 13.5px; } .trig span { font-size: 12.5px; color: var(--ink-2); }
+.rules { padding: 6px 14px 12px; display: grid; gap: 10px; }
+.rule { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; font-size: 13px; }
+.rule small { grid-column: 1; color: var(--ink-3); font-size: 12px; }
+.rule select, .rule input[type="time"] { height: 30px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--surface); padding: 0 6px; grid-row: 1 / span 2; grid-column: 2; }
+.switch { position: relative; width: 38px; height: 22px; grid-row: 1 / span 2; grid-column: 2; }
+.switch input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+.switch i { position: absolute; inset: 0; border-radius: 11px; background: var(--line-strong); pointer-events: none; }
+.switch i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.switch input:checked + i { background: var(--accent); }
+.switch input:checked + i::after { transform: translateX(16px); }
+.switch input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+.log { list-style: none; margin: 0; padding: 4px 14px 12px; display: grid; gap: 0; font-size: 13px; }
+.log li { display: grid; grid-template-columns: 70px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.log li:last-child { border-bottom: 0; }
+.log time { color: var(--ink-3); font-size: 12px; }
+.log:empty::before { content: "Pick a trigger above to see what happens."; color: var(--ink-3); padding: 8px 0; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border-top: 1px solid var(--line); border-radius: 0 0 var(--r-lg) var(--r-lg); overflow: hidden; }
+.stats div { background: var(--surface); padding: 10px 14px; } .stats b { display: block; font-size: 18px; } .stats span { font-size: 12px; color: var(--ink-3); }
+
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } .phone { position: static; height: 620px; } }
+@media (max-width: 480px) { .triggers { grid-template-columns: minmax(0, 1fr); } .phone { border-width: 8px; border-radius: 34px; } }
+</style>
+</head>
+<body>
+<div class="demo-bar"><span>Demo build by Arav Bazar. Pecan Street Plumbing is fictional; no real texts are sent.</span><a href="../">See all projects</a></div>
+<main class="wrap">
+  <div class="head">
+    <div><h1>Pecan Street Plumbing: missed-call text-back</h1><p>When the shop can't pick up, the caller gets a text within a minute and can book by replying. After every job, the customer gets a review request.</p></div>
+    <button class="btn" id="resetBtn" type="button">Reset demo</button>
+  </div>
+  <div class="grid">
+    <div class="phone" aria-label="Customer's phone">
+      <div class="status"><span id="clock">2:14</span><span>5G</span></div>
+      <div class="thead"><div class="av" aria-hidden="true">PS</div><b>Pecan Street Plumbing</b><small>(512) 555-0157</small></div>
+      <div class="thread" id="thread" aria-live="polite"></div>
+      <div class="quick" id="quick"></div>
+      <form class="compose" id="compose" autocomplete="off"><label class="sr" for="reply">Reply as the customer</label><input class="input" id="reply" placeholder="Text message"><button class="btn primary">Send</button></form>
+    </div>
+    <div>
+      <section class="card"><h2>Try a situation</h2>
+        <div class="triggers">
+          <button class="trig" data-t="busy" type="button"><b>Missed call during a job</b><span>Weekday 2:14pm, both plumbers on site</span></button>
+          <button class="trig" data-t="after" type="button"><b>Missed call after hours</b><span>Saturday 9:40pm, burst pipe</span></button>
+          <button class="trig" data-t="review" type="button"><b>Job marked complete</b><span>Water heater swap finished</span></button>
+          <button class="trig" data-t="stop" type="button"><b>Customer opts out</b><span>Replies STOP to any text</span></button>
+        </div>
+      </section>
+      <section class="card"><h2>Rules</h2>
+        <div class="rules">
+          <label class="rule">Text back after a missed call<small>Only if no voicemail was left and the number isn't a known spammer</small>
+            <select id="delay"><option value="30">After 30 seconds</option><option value="60" selected>After 60 seconds</option><option value="120">After 2 minutes</option></select></label>
+          <div class="rule"><span>Page the on-call plumber for emergencies</span><small>Burst pipe, flooding, gas smell, no water</small><span class="switch"><input type="checkbox" id="page" checked aria-label="Page on-call plumber"><i></i></span></div>
+          <div class="rule"><span>Ask every customer for a Google review</span><small>Everyone gets the link (Google doesn't allow screening). Low ratings alert the owner too.</small><span class="switch"><input type="checkbox" id="rev" checked aria-label="Send review requests"><i></i></span></div>
+          <div class="rule"><span>Quiet hours</span><small>Non-emergency texts wait until 8am</small><span class="switch"><input type="checkbox" id="quiet" checked aria-label="Quiet hours"><i></i></span></div>
+        </div>
+      </section>
+      <section class="card"><h2>What the system did <span class="muted" style="font-weight:400;font-size:12.5px">Owner's log</span></h2>
+        <ul class="log" id="log"></ul>
+        <div class="stats"><div><b id="sRecovered">23</b><span>Missed calls recovered this month</span></div><div><b id="sBooked">$8,140</b><span>Booked from those calls</span></div><div><b id="sReviews">31</b><span>New Google reviews</span></div></div>
+      </section>
+    </div>
+  </div>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  let mode = null, stage = null, optedOut = false, busy = false, clock = "2:14 PM", gen = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  function bubble(who, text) { const d = document.createElement("div"); d.className = "b " + who; d.textContent = text; $("thread").appendChild(d); $("thread").scrollTop = $("thread").scrollHeight; }
+  function sys(text, cls = "sysline") { const d = document.createElement("div"); d.className = cls; d.innerHTML = text; $("thread").appendChild(d); $("thread").scrollTop = $("thread").scrollHeight; }
+  function log(text) { const li = document.createElement("li"); li.innerHTML = `<time>${clock.replace(" ", " ")}</time><span>${esc(text)}</span>`; $("log").prepend(li); }
+  function quick(list) { $("quick").innerHTML = list.map(q => `<button type="button">${esc(q)}</button>`).join(""); }
+  async function biz(text, delay = 900) { const g = gen; busy = true; await wait(delay); if (g !== gen) return; busy = false; if (optedOut) return; bubble("them", text); }
+  function reset() { $("thread").innerHTML = ""; $("log").innerHTML = ""; quick([]); mode = stage = null; optedOut = false; }
+
+  async function trigger(t) {
+    gen++; busy = false; reset();
+    const delay = +$("delay").value;
+    if (t === "busy") {
+      mode = "busy"; clock = "2:14 PM"; $("clock").textContent = "2:14";
+      sys('<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3l3 5-2 2a12 12 0 006 6l2-2 5 3-2 4C10 21 3 14 2 5z" fill="currentColor"/></svg> Missed call, 2:14 PM', "missed");
+      log("Missed call from (512) 555-0193. No voicemail. Not a known spam number.");
+      sys(`Text sent ${delay < 60 ? delay + " seconds" : delay / 60 + (delay === 60 ? " minute" : " minutes")} later`);
+      log(`Text-back sent after ${delay}s.`);
+      await biz("Hi, this is Pecan Street Plumbing. Sorry we missed your call, both of our plumbers are on jobs right now. What's going on? Reply here and we'll get you on the schedule.");
+      stage = "ask"; quick(["Kitchen sink is clogged", "Water heater is leaking", "Just want a quote for a toilet"]);
+    }
+    if (t === "after") {
+      mode = "after"; clock = "9:40 PM"; $("clock").textContent = "9:40";
+      sys("Missed call, Saturday 9:40 PM", "missed");
+      log("Missed call after hours from (737) 555-0128.");
+      await biz("Hi, this is Pecan Street Plumbing. We're closed right now, but if this is an emergency like a burst pipe or flooding, reply EMERGENCY and we'll page our on-call plumber. Otherwise reply with what's going on and we'll text you at 8am.");
+      stage = "ask"; quick(["EMERGENCY, pipe burst under the sink", "Faucet dripping, not urgent"]);
+    }
+    if (t === "review") {
+      mode = "review"; clock = "4:05 PM"; $("clock").textContent = "4:05";
+      log("Job #2231 marked complete by Luis: 50-gallon gas water heater replaced.");
+      if (!$("rev").checked) { log("Review requests are off, nothing sent."); sys("Review requests are turned off in Rules."); return; }
+      sys("2 hours after the job");
+      log("Review request scheduled for 2 hours after completion.");
+      await biz("Hi Maria, thanks for choosing Pecan Street Plumbing today. How did Luis do? Reply with a number from 1 to 5.");
+      stage = "rate"; quick(["5", "4", "2"]);
+    }
+    if (t === "stop") {
+      mode = "stop"; clock = "10:12 AM"; $("clock").textContent = "10:12";
+      await biz("Hi, this is Pecan Street Plumbing. Sorry we missed your call. What's going on? Reply here and we'll get you on the schedule.", 300);
+      stage = "ask"; quick(["STOP"]);
+    }
+  }
+
+  async function reply(text) {
+    if (!text.trim() || busy) return;
+    bubble("me", text); quick([]);
+    const t = text.toLowerCase();
+    if (/^\s*(stop|unsubscribe|cancel|quit)\s*$/.test(t)) {
+      await biz("You're unsubscribed from Pecan Street Plumbing texts. Reply START to opt back in.", 600);
+      optedOut = true; log("Customer replied STOP. Number added to the do-not-text list; no more automated texts."); stage = null; return;
+    }
+    if (optedOut) { if (/^\s*start\s*$/.test(t)) { optedOut = false; await biz("You're opted back in.", 500); log("Customer opted back in."); } return; }
+
+    if (stage === "rate") {
+      const n = +(t.match(/[1-5]/) || [0])[0];
+      if (!n) { await biz("Just a number from 1 to 5 is perfect."); return; }
+      log(`Customer rated the job ${n} of 5.`);
+      if (n >= 4) { await biz("Thank you! It would mean a lot if you shared that on Google. It takes about 30 seconds: g.page/pecan-street-demo/review"); log("Google review link sent."); $("sReviews").textContent = +$("sReviews").textContent + 1; }
+      else { await biz("Thanks for telling us. I'm sorry it wasn't a great experience. Our owner, Daniel, will call you today to make it right. If you'd also like to leave a Google review, here's the link: g.page/pecan-street-demo/review"); log("Low rating: owner alerted by text with the job details. Review link still sent."); }
+      stage = null; return;
+    }
+    if (stage === "ask" || stage === "detail") {
+      const emergency = /emergency|burst|flood|flooding|gas|no water|sewage|backing up/.test(t);
+      if (emergency) {
+        if ($("page").checked) {
+          log("Emergency keywords found. On-call plumber (Luis) paged with the customer's number and message.");
+          await biz("Got it. I've paged our on-call plumber and he'll call you within 10 minutes. In the meantime, turn off the main water valve, usually near the street or where the line enters the house.");
+        } else {
+          log("Emergency keywords found, but paging is off. Flagged for the morning.");
+          await biz("Thanks. Our on-call line is (512) 555-0157 if this can't wait. Otherwise we'll text you first thing at 8am.");
+        }
+        stage = null; return;
+      }
+      if (mode === "after" && $("quiet").checked) {
+        log("Not an emergency. Reply queued until 8am because of quiet hours.");
+        sys("Next morning, 8:00 AM");
+        await biz("Good morning, this is Pecan Street Plumbing. Thanks for the details. We have openings today at 10am or 1pm. Reply 1 or 2.", 1100);
+        stage = "pick"; quick(["1", "2"]); return;
+      }
+      log("Customer described the problem. Job type detected: " + (t.includes("heater") ? "water heater" : t.includes("quote") || t.includes("toilet") ? "estimate" : "drain or fixture") + ".");
+      await biz(t.includes("quote") ? "Happy to. Estimates are free. Can someone come by tomorrow at 9am or 3pm? Reply 1 or 2." : "Thanks, we can help with that. Our next openings are today at 4:30pm or tomorrow at 8am. Reply 1 or 2.");
+      stage = "pick"; quick(["1", "2", "Neither works"]); return;
+    }
+    if (stage === "pick") {
+      if (/\b1\b|first|4:30|10/.test(t)) { await biz("You're booked. We'll text you when the plumber is on the way. The $89 service call fee is waived if you go ahead with the repair."); }
+      else if (/\b2\b|second|8am|1pm|3pm|tomorrow/.test(t)) { await biz("You're booked. We'll text you when the plumber is on the way."); }
+      else { await biz("No problem. What day and time works better? The office will confirm within the hour."); log("Customer asked for another time; office task created."); stage = null; return; }
+      log("Appointment booked from the text thread and added to the schedule. Owner notified.");
+      $("sRecovered").textContent = +$("sRecovered").textContent + 1;
+      $("sBooked").textContent = "$" + (+$("sBooked").textContent.replace(/\D/g, "") + 310).toLocaleString();
+      stage = null; return;
+    }
+  }
+
+  document.querySelectorAll(".trig").forEach(b => b.onclick = () => trigger(b.dataset.t));
+  $("compose").onsubmit = e => { e.preventDefault(); const v = $("reply").value; $("reply").value = ""; reply(v); };
+  $("quick").onclick = e => { const b = e.target.closest("button"); if (b) reply(b.textContent); };
+  $("resetBtn").onclick = reset;
+  trigger("busy");
+  window.__demo = { trigger, reply };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cooper Air Lead Pipeline</title>
+<meta name="description" content="Demo: a speed-to-lead automation that cleans, scores and routes every new lead and texts hot ones in under a minute.">
+<link rel="stylesheet" href="../assets/base.css">
+<style>
+/* Layout: an automation run history. Workflow steps on the left, runs in the middle, one run's step detail on the right. */
+:root { --accent: #b45309; --accent-soft: #fcefdc; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --accent: #f0a050; --accent-soft: #3a2812; --accent-ink: #1e1206; } }
+:root[data-theme="dark"] { --accent: #f0a050; --accent-soft: #3a2812; --accent-ink: #1e1206; }
+
+.top { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between; padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); background: var(--surface); border-bottom: 1px solid var(--line); }
+.top h1 { margin: 0; font-size: 16px; }
+.top p { margin: 2px 0 0; color: var(--ink-3); font-size: 12.5px; }
+.kpis { display: flex; gap: 28px; flex-wrap: wrap; }
+.kpis b { display: block; font-size: 18px; }
+.kpis span { font-size: 12px; color: var(--ink-3); }
+
+.app { display: grid; grid-template-columns: 270px minmax(0, 1fr) 380px; min-height: calc(100vh - 100px); }
+.pane { min-width: 0; border-right: 1px solid var(--line); }
+.pane:last-child { border-right: 0; background: var(--surface); }
+.pane h2 { font-size: 12.5px; color: var(--ink-3); font-weight: 600; margin: 0; padding: 14px 16px 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+.flow { list-style: none; margin: 0; padding: 0 16px 16px; display: grid; gap: 0; }
+.flow li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; position: relative; padding-bottom: 14px; }
+.flow li::before { content: ""; position: absolute; left: 10px; top: 22px; bottom: 0; width: 2px; background: var(--line); }
+.flow li:last-child::before { display: none; }
+.flow .n { width: 22px; height: 22px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line-strong); display: grid; place-items: center; font-size: 11px; font-weight: 700; color: var(--ink-3); z-index: 1; }
+.flow b { display: block; font-size: 13.5px; }
+.flow span { color: var(--ink-3); font-size: 12px; }
+.flow li.run .n { border-color: var(--accent); color: var(--accent); animation: pulse 1s ease-in-out infinite; }
+.flow li.done .n { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.flow li.skip .n { border-style: dashed; }
+.flow li.stop .n { background: var(--bad); border-color: var(--bad); color: #fff; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 4px var(--accent-soft); } }
+
+.testform { margin: 0 16px 16px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); display: grid; gap: 8px; }
+.testform label { display: grid; gap: 3px; font-size: 12px; color: var(--ink-2); }
+.testform select.input, .testform textarea.input { height: auto; padding: 7px 10px; }
+.testform .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.examples { display: flex; flex-wrap: wrap; gap: 5px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tablewrap { overflow-x: auto; }
+th { text-align: left; font-weight: 500; color: var(--ink-3); font-size: 12px; padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--bg); position: sticky; top: 0; }
+td { padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--surface); }
+tbody tr[aria-selected="true"] { background: var(--accent-soft); }
+.score { display: inline-flex; align-items: center; gap: 6px; }
+.score i { display: inline-block; width: 36px; height: 5px; background: var(--sunken); border-radius: 3px; overflow: hidden; position: relative; }
+.score i::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--accent); }
+tr.new { animation: rowin 1.6s ease-out; }
+@keyframes rowin { from { background: var(--accent-soft); } }
+
+.detail { padding: 0 16px 20px; }
+.dhead { display: grid; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.dhead b { font-size: 16px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.steps li { border: 1px solid var(--line); border-radius: var(--r-md); }
+.steps summary { list-style: none; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 8px 10px; cursor: pointer; font-size: 13px; }
+.steps summary::-webkit-details-marker { display: none; }
+.steps .ms { color: var(--ink-3); font-size: 12px; }
+.kv { display: grid; grid-template-columns: 96px 1fr; gap: 4px 10px; padding: 0 10px 10px; font-size: 12.5px; }
+.kv dt { color: var(--ink-3); } .kv dd { margin: 0; overflow-wrap: anywhere; }
+.sms { margin: 8px 10px 10px; padding: 8px 10px; background: var(--sunken); border-radius: 10px; font-size: 12.5px; }
+.empty { color: var(--ink-3); padding: 10px 0; }
+
+@media (max-width: 1180px) { .app { grid-template-columns: 260px minmax(0, 1fr); } .pane:last-child { grid-column: 1 / -1; border-top: 1px solid var(--line); } }
+@media (max-width: 760px) { .app { grid-template-columns: minmax(0, 1fr); } .pane { border-right: 0; border-bottom: 1px solid var(--line); } }
+</style>
+</head>
+<body>
+<div class="demo-bar"><span>Demo build by Arav Bazar. Cooper Air is a fictional HVAC company; leads and numbers are sample data.</span><a href="../">See all projects</a></div>
+<header class="top">
+  <div><h1>Cooper Air lead pipeline</h1><p>Every new lead is cleaned, scored and routed before a person touches it.</p></div>
+  <div class="kpis">
+    <div><b id="kLeads">37</b><span>Leads today</span></div>
+    <div><b id="kMedian">31s</b><span>Median time to first text</span></div>
+    <div><b id="kHot">11</b><span>Sent to on-call tech</span></div>
+    <div><b id="kJunk">6</b><span>Filtered out</span></div>
+  </div>
+</header>
+
+<main class="app">
+  <section class="pane" aria-label="Workflow">
+    <h2>Workflow</h2>
+    <ol class="flow" id="flow"></ol>
+    <h2>Send a test lead</h2>
+    <form class="testform" id="tf" autocomplete="off">
+      <div class="examples" id="examples">
+        <button class="btn sm" type="button" data-ex="hot">AC out today</button>
+        <button class="btn sm" type="button" data-ex="warm">Tune-up</button>
+        <button class="btn sm" type="button" data-ex="dupe">Duplicate</button>
+        <button class="btn sm" type="button" data-ex="junk">Spam</button>
+        <button class="btn sm" type="button" data-ex="far">Out of area</button>
+      </div>
+      <div class="two">
+        <label>Name<input class="input" id="f-name"></label>
+        <label>Phone<input class="input" id="f-phone" inputmode="tel"></label>
+      </div>
+      <div class="two">
+        <label>Email<input class="input" id="f-email"></label>
+        <label>ZIP<input class="input" id="f-zip" inputmode="numeric"></label>
+      </div>
+      <div class="two">
+        <label>Source<select class="input" id="f-src"><option>Website form</option><option>Google Local Services</option><option>Facebook lead ad</option><option>Angi</option></select></label>
+        <label>Service<select class="input" id="f-svc"><option>AC not cooling</option><option>No heat</option><option>New system quote</option><option>Tune-up</option><option>Other</option></select></label>
+      </div>
+      <label>Message<textarea class="input" id="f-msg" rows="2"></textarea></label>
+      <button class="btn primary" id="runBtn">Run pipeline</button>
+    </form>
+  </section>
+
+  <section class="pane" aria-label="Runs">
+    <h2>Runs today <span class="muted" id="runCount"></span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Time</th><th>Lead</th><th>Source</th><th>Score</th><th>Route</th><th>First text</th><th>Status</th></tr></thead>
+      <tbody id="runs"></tbody>
+    </table></div>
+  </section>
+
+  <aside class="pane" aria-label="Run detail">
+    <h2>Run detail</h2>
+    <div class="detail" id="detail"><p class="empty">Pick a run to see what each step did.</p></div>
+  </aside>
+</main>
+
+<script>
+(() => {
+  const STEPS = [
+    ["Lead received", "Form, Google LSA, Facebook, Angi"],
+    ["Clean and validate", "Phone, email, spam checks"],
+    ["Check for duplicates", "Same phone or email in 30 days"],
+    ["Check service area", "ZIP against the 11 ZIPs served"],
+    ["Score", "Urgency, source and intent"],
+    ["Route", "Hot, warm or nurture"],
+    ["Text the lead", "Within 60 seconds"],
+    ["Create CRM record", "Contact, deal and task"],
+    ["Alert the team", "On-call tech for hot leads"]
+  ];
+  const ZIPS = { "78664": "Round Rock", "78665": "Round Rock", "78681": "Round Rock", "78626": "Georgetown", "78628": "Georgetown", "78660": "Pflugerville", "78613": "Cedar Park", "78641": "Leander", "78634": "Hutto", "78729": "North Austin", "78750": "North Austin" };
+  const CRM_PHONES = new Set(["5125550133", "5125550174"]);
+  const EX = {
+    hot: { name: "Tasha Greene", phone: "512-555-0161", email: "tasha.greene@gmail.com", zip: "78664", src: "Google Local Services", svc: "AC not cooling", msg: "AC stopped blowing cold this morning and it's 91 inside. Need someone today if possible." },
+    warm: { name: "Ben Ortiz", phone: "(737) 555-0122", email: "bortiz@outlook.com", zip: "78626", src: "Website form", svc: "Tune-up", msg: "Looking to get the furnace checked before winter. Any weekday works." },
+    dupe: { name: "Lauren Pike", phone: "512 555 0133", email: "lauren.pike@yahoo.com", zip: "78613", src: "Facebook lead ad", svc: "New system quote", msg: "Following up, still want a quote." },
+    junk: { name: "SEO Experts", phone: "1111111111", email: "rank@mailinator.com", zip: "10001", src: "Website form", svc: "Other", msg: "We can get your website to page 1 of Google! Visit http://cheap-seo.example" },
+    far: { name: "Dev Raman", phone: "512-555-0158", email: "dev.raman@gmail.com", zip: "78702", src: "Angi", svc: "New system quote", msg: "Our system is 18 years old, want a replacement quote." }
+  };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const fmtPhone = d => "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6);
+
+  function process(L) {
+    const out = []; const t0 = 0; let t = t0;
+    const step = (i, status, ms, kv, extra) => { t += ms; out.push({ i, status, ms, at: t, kv, extra }); };
+    step(0, "ok", 40, { Source: L.src, Received: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" }), Service: L.svc });
+    const digits = L.phone.replace(/\D/g, "").slice(-10);
+    const problems = [];
+    if (digits.length < 10 || /^(\d)\1{9}$/.test(digits)) problems.push("phone is not a real number");
+    if (/mailinator|tempmail|guerrilla|10minute/i.test(L.email)) problems.push("disposable email");
+    if (/https?:\/\/|\bseo\b|crypto|backlink|page 1 of google/i.test(L.msg + " " + L.name)) problems.push("message looks like spam");
+    const clean = { name: L.name.trim().replace(/\s+/g, " "), phone: digits.length === 10 ? fmtPhone(digits) : L.phone, email: L.email.trim().toLowerCase() };
+    if (problems.length) {
+      step(1, "stop", 120, { Result: "Filtered out", Why: problems.join(", ") });
+      return { route: "Filtered", status: "Filtered", score: 0, steps: out, clean, firstText: "None", reason: problems.join(", ") };
+    }
+    step(1, "ok", 110, { Phone: clean.phone, Email: clean.email || "None", Name: clean.name });
+    if (CRM_PHONES.has(digits)) {
+      step(2, "stop", 260, { Result: "Duplicate", Match: "Existing contact, last lead 9 days ago", Action: "Added a note to the existing deal and pinged its owner" });
+      return { route: "Merged", status: "Duplicate", score: null, steps: out, clean, firstText: "None", reason: "existing contact" };
+    }
+    step(2, "ok", 240, { Result: "New contact" });
+    const city = ZIPS[L.zip];
+    if (!city) {
+      step(3, "stop", 30, { Result: "Outside service area", ZIP: L.zip || "Missing" });
+      step(6, "ok", 900, { To: clean.phone }, `Hi ${clean.name.split(" ")[0]}, thanks for reaching out to Cooper Air. ZIP ${L.zip} is just outside the area we serve, so we can't take this one. Sorry we couldn't help!`);
+      return { route: "Declined", status: "Out of area", score: null, steps: out, clean, firstText: secs(out), reason: "outside service area" };
+    }
+    step(3, "ok", 30, { Result: "In area", City: city });
+    let score = 0; const why = [];
+    const svcPts = { "AC not cooling": 40, "No heat": 40, "New system quote": 30, "Tune-up": 30, "Other": 5 }[L.svc]; score += svcPts; why.push(L.svc + " +" + svcPts);
+    if (/\b(today|asap|now|emergency|urgent|tonight|not working|stopped|won't|isn't)\b/i.test(L.msg)) { score += 25; why.push("urgent wording +25"); }
+    if (/\b(\d{2,3})\s*(inside|degrees)\b/i.test(L.msg)) { score += 10; why.push("hot house +10"); }
+    if (/\b(1[5-9]|2\d) years? old\b|replace/i.test(L.msg)) { score += 10; why.push("old system +10"); }
+    const srcPts = { "Google Local Services": 15, "Website form": 10, "Angi": 5, "Facebook lead ad": 5 }[L.src]; score += srcPts; why.push(L.src + " +" + srcPts);
+    score = Math.min(100, score);
+    step(4, "ok", 60, { Score: score + " / 100", Breakdown: why.join(", ") });
+    const route = score >= 70 ? "Hot" : score >= 40 ? "Warm" : "Nurture";
+    step(5, "ok", 15, { Route: route, Rule: route === "Hot" ? "Score 70+ goes to the on-call tech" : route === "Warm" ? "Score 40 to 69 gets a text and a call task within 2 hours" : "Under 40 gets a text and a 3-email sequence" });
+    const first = clean.name.split(" ")[0];
+    const sms = route === "Hot"
+      ? `Hi ${first}, this is Cooper Air. Sorry your AC is out. A technician can be at your home in ${city} today. Reply 1 for 12 to 2pm or 2 for 3 to 5pm, or call us at (512) 555-0109.`
+      : route === "Warm"
+      ? `Hi ${first}, thanks for reaching out to Cooper Air about a ${L.svc.toLowerCase()}. What day this week works best for a visit? Reply with a day and we'll lock in a time.`
+      : `Hi ${first}, thanks for contacting Cooper Air. We'll email you a few times that work. Reply here anytime with questions.`;
+    step(6, "ok", route === "Hot" ? 8200 : 21000, { To: clean.phone, Sent: "via Twilio" }, sms);
+    step(7, "ok", 640, { Contact: clean.name, Deal: L.svc + ", " + city, Stage: route === "Hot" ? "Dispatch today" : "New lead", Task: route === "Hot" ? "Call within 5 minutes" : "Call within 2 hours" });
+    step(8, route === "Hot" ? "ok" : "skip", route === "Hot" ? 300 : 0, route === "Hot" ? { Alerted: "On-call tech (Marco) by text, #dispatch in Slack" } : { Result: "Skipped, not a hot lead" });
+    return { route, status: "Completed", score, steps: out, clean, firstText: secs(out), reason: why.join(", ") };
+  }
+  function secs(steps) { const s = steps.find(x => x.i === 6); return s ? Math.max(1, Math.round(s.at / 1000)) + "s" : "None"; }
+
+  // ---------- Seed history ----------
+  const now = new Date(); const RUNS = [];
+  const seed = [
+    [8, 2, { name: "Gloria Vance", phone: "512-555-0147", email: "gvance@gmail.com", zip: "78681", src: "Google Local Services", svc: "No heat", msg: "Heater won't turn on, house is 58 degrees" }],
+    [8, 34, { name: "Ryan Holt", phone: "737-555-0150", email: "ryan.holt@gmail.com", zip: "78641", src: "Website form", svc: "Tune-up", msg: "Annual maintenance please" }],
+    [9, 12, { name: "Crypto Leads Pro", phone: "000", email: "x@tempmail.dev", zip: "", src: "Website form", svc: "Other", msg: "Buy backlinks crypto" }],
+    [9, 47, { name: "Anita Brooks", phone: "512-555-0174", email: "anita.b@icloud.com", zip: "78660", src: "Facebook lead ad", svc: "New system quote", msg: "Still interested" }],
+    [10, 21, { name: "Sam Whitaker", phone: "512-555-0139", email: "samw@gmail.com", zip: "78729", src: "Angi", svc: "New system quote", msg: "Unit is 17 years old, thinking about replacing" }],
+    [11, 5, { name: "Keisha Lowe", phone: "512-555-0112", email: "klowe@gmail.com", zip: "78634", src: "Google Local Services", svc: "AC not cooling", msg: "AC is blowing warm, need someone today" }]
+  ];
+  seed.forEach(([h, m, L]) => { const d = new Date(now); d.setHours(h, m, 0); const r = process(L); r.time = d; r.lead = L; RUNS.unshift(r); });
+
+  function renderFlow(run, upto) {
+    $("flow").innerHTML = STEPS.map((s, i) => {
+      let cls = "";
+      if (run) { const st = run.steps.find(x => x.i === i); if (st && (upto == null || run.steps.indexOf(st) < upto)) cls = st.status === "stop" ? "stop" : st.status === "skip" ? "skip" : "done"; else if (upto != null && run.steps[upto] && run.steps[upto].i === i) cls = "run"; }
+      return `<li class="${cls}"><span class="n">${i + 1}</span><div><b>${s[0]}</b><span>${s[1]}</span></div></li>`;
+    }).join("");
+  }
+  const routePill = r => ({ Hot: "bad", Warm: "warn", Nurture: "", Filtered: "", Merged: "accent", Declined: "" }[r] ?? "");
+  const statusPill = s => s === "Completed" ? "ok" : s === "Filtered" ? "" : "warn";
+  let selected = 0;
+  function renderRuns(fresh) {
+    $("runCount").textContent = RUNS.length + " shown";
+    $("runs").innerHTML = RUNS.map((r, i) => `<tr data-i="${i}" aria-selected="${i === selected}" class="${fresh && i === 0 ? "new" : ""}">
+      <td>${r.time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</td>
+      <td>${esc(r.clean.name)}</td><td class="muted">${esc(r.lead.src)}</td>
+      <td>${r.score == null ? '<span class="muted">n/a</span>' : `<span class="score"><i style="--w:${r.score}%"></i>${r.score}</span>`}</td>
+      <td><span class="pill ${routePill(r.route)}">${r.route}</span></td><td>${r.firstText}</td>
+      <td><span class="pill ${statusPill(r.status)}">${r.status}</span></td></tr>`).join("");
+  }
+  function renderDetail(r, upto) {
+    const steps = upto == null ? r.steps : r.steps.slice(0, upto);
+    const total = r.steps.reduce((a, s) => a + s.ms, 0);
+    $("detail").innerHTML = `<div class="dhead"><b>${esc(r.clean.name)}</b><span class="muted">${esc(r.lead.svc)}, ${esc(r.lead.src)}, ZIP ${esc(r.lead.zip || "none")}</span>
+      <span><span class="pill ${routePill(r.route)}">${r.route}</span> <span class="muted">${upto == null ? "Finished in " + (total / 1000).toFixed(1) + "s" : "Running"}</span></span>
+      <span class="muted" style="font-size:12.5px">"${esc(r.lead.msg)}"</span></div>
+      <ul class="steps">${steps.map(s => `<li><details ${s.extra || s.status === "stop" ? "open" : ""}><summary><span>${STEPS[s.i][0]}</span><span class="ms">${s.ms >= 1000 ? (s.ms / 1000).toFixed(1) + "s" : s.ms + "ms"}</span><span class="pill ${s.status === "ok" ? "ok" : s.status === "stop" ? "warn" : ""}">${s.status === "ok" ? "Done" : s.status === "stop" ? "Stopped" : "Skipped"}</span></summary>
+        <dl class="kv">${Object.entries(s.kv).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>${s.extra ? `<div class="sms">${esc(s.extra)}</div>` : ""}</details></li>`).join("")}</ul>`;
+  }
+  function select(i) { selected = i; renderRuns(); renderDetail(RUNS[i]); renderFlow(RUNS[i]); }
+
+  // ---------- Live run ----------
+  let running = false;
+  async function run(L) {
+    if (running) return; running = true; $("runBtn").disabled = true;
+    const r = process(L); r.time = new Date(); r.lead = L;
+    // Real text delivery takes seconds; the animation compresses it so the demo isn't slow.
+    for (let k = 0; k <= r.steps.length; k++) {
+      renderFlow(r, k); renderDetail(r, k);
+      if (k < r.steps.length) await new Promise(res => setTimeout(res, Math.min(700, 220 + r.steps[k].ms / 30)));
+    }
+    RUNS.unshift(r); selected = 0; renderRuns(true); renderDetail(r); renderFlow(r);
+    $("kLeads").textContent = +$("kLeads").textContent + 1;
+    if (r.route === "Hot") $("kHot").textContent = +$("kHot").textContent + 1;
+    if (r.status === "Filtered") $("kJunk").textContent = +$("kJunk").textContent + 1;
+    running = false; $("runBtn").disabled = false; return r;
+  }
+  function fill(ex) { const L = EX[ex]; $("f-name").value = L.name; $("f-phone").value = L.phone; $("f-email").value = L.email; $("f-zip").value = L.zip; $("f-src").value = L.src; $("f-svc").value = L.svc; $("f-msg").value = L.msg; }
+  $("examples").onclick = e => { const b = e.target.closest("[data-ex]"); if (b) fill(b.dataset.ex); };
+  $("tf").onsubmit = e => { e.preventDefault(); if (!$("f-name").value.trim()) { $("f-name").focus(); return; } run({ name: $("f-name").value, phone: $("f-phone").value, email: $("f-email").value, zip: $("f-zip").value.trim(), src: $("f-src").value, svc: $("f-svc").value, msg: $("f-msg").value }); };
+  $("runs").onclick = e => { const tr = e.target.closest("tr"); if (tr && !running) select(+tr.dataset.i); };
+  fill("hot"); select(0);
+  window.__demo = { run: ex => run(EX[ex]) };
+})();
+</script>
+</body>
+</html>

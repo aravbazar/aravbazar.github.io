@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agent Ops Monitor</title>
+<meta name="description" content="Demo: one dashboard for every AI agent an agency runs across its clients, with alerts, knowledge gaps and a forwardable client report.">
+<link rel="stylesheet" href="../assets/base.css">
+<style>
+/* Layout: ops table first (summary before detail), selected agent's chart and feeds below. */
+:root { --accent: #2357c6; --accent-soft: #e4ebfa; --bar: #8fa9e0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --accent: #7ea2ef; --accent-soft: #1c2640; --accent-ink: #0b1020; --bar: #3d5794; } }
+:root[data-theme="dark"] { --accent: #7ea2ef; --accent-soft: #1c2640; --accent-ink: #0b1020; --bar: #3d5794; }
+
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; gap: 12px 24px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding-block: 12px; }
+.top h1 { margin: 0; font-size: 16px; }
+.top p { margin: 2px 0 0; font-size: 12.5px; color: var(--ink-3); }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--r-sm); overflow: hidden; }
+.seg button { border: 0; background: var(--surface); height: 30px; padding: 0 12px; cursor: pointer; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+.summary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; margin-block: 18px; }
+.summary div { background: var(--surface); padding: 12px 14px; }
+.summary b { font-size: 20px; display: block; }
+.summary span { font-size: 12px; color: var(--ink-3); }
+.summary small { font-size: 12px; margin-left: 6px; }
+.up { color: var(--ok); } .down { color: var(--bad); }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+.panel h2 { font-size: 13.5px; margin: 0; padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-weight: 500; font-size: 12px; color: var(--ink-3); padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th.num, td.num { text-align: right; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--bg); }
+tbody tr[aria-selected="true"] { background: var(--accent-soft); }
+tbody tr:last-child td { border-bottom: 0; }
+td .sub { display: block; color: var(--ink-3); font-size: 12px; }
+.spark { width: 84px; height: 22px; display: block; }
+
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; margin-block: 16px 40px; }
+.chartbox { padding: 12px 14px 8px; }
+.chart { width: 100%; height: 220px; display: block; }
+.legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink-2); padding: 0 14px 12px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.feed { list-style: none; margin: 0; padding: 0; }
+.feed li { padding: 10px 14px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-size: 13px; }
+.feed li:last-child { border-bottom: 0; }
+.feed .t { grid-column: 2; color: var(--ink-3); font-size: 12px; }
+.sev { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; }
+.sev.bad { background: var(--bad); } .sev.warn { background: var(--warn); } .sev.ok { background: var(--ok); }
+.gaps li { grid-template-columns: 1fr auto; }
+.stack { display: grid; gap: 16px; align-content: start; }
+
+.modal { position: fixed; inset: 0; background: rgba(10, 14, 20, .45); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.sheet { background: var(--surface); border-radius: var(--r-lg); max-width: 640px; width: 100%; max-height: 86vh; overflow: auto; border: 1px solid var(--line); }
+.sheet header { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); }
+.report { padding: 18px 22px 24px; font-size: 14px; line-height: 1.6; }
+.report h3 { margin: 0 0 4px; font-size: 18px; }
+.report h4 { margin: 18px 0 4px; font-size: 14px; }
+.report ul { margin: 4px 0; padding-left: 20px; }
+
+@media (max-width: 1000px) { .grid2 { grid-template-columns: minmax(0, 1fr); } .summary { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+<div class="demo-bar"><span>Demo build by Arav Bazar. Clients and metrics are fictional sample data.</span><a href="../">See all projects</a></div>
+<header class="top"><div class="wrap">
+  <div><h1>Agent operations</h1><p>Every AI agent running for your clients, in one place.</p></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <div class="seg" id="range"><button type="button" data-r="24h" aria-pressed="true">24 hours</button><button type="button" data-r="7d" aria-pressed="false">7 days</button></div>
+    <button class="btn primary" id="reportBtn" type="button">Client report</button>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <section class="summary" id="summary" aria-label="Totals"></section>
+  <section class="panel" aria-label="Agents">
+    <h2>Agents <span class="muted" style="font-weight:400;font-size:12.5px">Select a row for details</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Agent</th><th>Status</th><th class="num">Conversations</th><th>Trend</th><th class="num">Resolved by agent</th><th class="num">Handed to staff</th><th class="num">Avg. response</th><th class="num">Cost</th></tr></thead>
+      <tbody id="agents"></tbody>
+    </table></div>
+  </section>
+  <div class="grid2">
+    <section class="panel" aria-label="Activity">
+      <h2><span id="chartTitle">Activity</span><span class="muted" style="font-weight:400;font-size:12.5px" id="chartSub"></span></h2>
+      <div class="chartbox"><svg class="chart" id="chart" role="img" aria-label="Conversations over time"></svg></div>
+      <div class="legend"><span><i style="background:var(--bar)"></i>Conversations</span><span><i style="background:var(--bad)"></i>Errors</span></div>
+    </section>
+    <div class="stack">
+      <section class="panel" aria-label="Alerts"><h2>Alerts</h2><ul class="feed" id="alerts"></ul></section>
+      <section class="panel" aria-label="Knowledge gaps"><h2>Questions the agent couldn't answer</h2><ul class="feed gaps" id="gaps"></ul></section>
+    </div>
+  </div>
+</main>
+
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="repTitle">
+  <header><b id="repTitle">Client report</b><div style="display:flex;gap:8px"><button class="btn sm" id="copyRep" type="button">Copy text</button><button class="btn sm" id="closeRep" type="button">Close</button></div></header>
+  <div class="report" id="report"></div>
+</div></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  const AGENTS = [
+    { id: "wp", client: "Willow & Pine Aesthetics", name: "Front desk voice agent", kind: "Voice", base: 4.2, resolved: .81, cost: .11, lat: 0.9, unit: "calls", status: "ok",
+      alerts: [["warn", "Calendar API rate-limited 3 times at 9:02am; retries succeeded, no bookings lost.", "9:04am"], ["ok", "Prompt update v14 shipped: clearer filler pricing.", "Yesterday"]],
+      gaps: [["Do you take CareCredit?", 6], ["Can I bring my daughter (16) for a facial?", 3], ["Do you do microneedling?", 2]] },
+    { id: "rr", client: "Ridgeline Roofing", name: "Website chat agent", kind: "Chat", base: 6.5, resolved: .74, cost: .02, lat: 1.4, unit: "chats", status: "warn",
+      alerts: [["warn", "14% of questions fell below the confidence cutoff after the Oct 14 hail storm. Most were about solar and skylights.", "11:40am"], ["ok", "Lead form conversion 23% this week, up from 17%.", "Mon"]],
+      gaps: [["Do you install solar panels?", 19], ["Can you fix a leaking skylight?", 11], ["Do you work with State Farm?", 7]] },
+    { id: "ca", client: "Cooper Air", name: "Speed-to-lead pipeline", kind: "Automation", base: 3.1, resolved: .93, cost: .03, lat: 31, unit: "leads", status: "ok",
+      alerts: [["ok", "All 37 leads today got a first text in under 60 seconds.", "3:00pm"]],
+      gaps: [["Lead asked about a duct cleaning price by text", 4]] },
+    { id: "lw", client: "Lakeway Family Dental", name: "After-hours voice agent", kind: "Voice", base: 1.6, resolved: .69, cost: .12, lat: 1.1, unit: "calls", status: "bad",
+      alerts: [["bad", "Twilio number failed over to voicemail for 6 minutes at 7:12am. Fallback worked; 2 callers left messages and were called back.", "7:20am"], ["warn", "Handoffs to staff up 12% this week, mostly insurance questions.", "Tue"]],
+      gaps: [["Is Delta Dental PPO in network?", 14], ["How much is a crown without insurance?", 8]] },
+    { id: "hm", client: "Hill Country Movers", name: "Quote follow-up texts", kind: "Automation", base: 2.2, resolved: .88, cost: .01, lat: 42, unit: "threads", status: "ok",
+      alerts: [["ok", "Quote reminders recovered 9 quotes that had gone quiet for 3+ days.", "Mon"]], gaps: [] },
+    { id: "bp", client: "Bluebonnet Pet Clinic", name: "Booking chat agent", kind: "Chat", base: 2.9, resolved: .79, cost: .02, lat: 1.2, unit: "chats", status: "ok",
+      alerts: [], gaps: [["Do you see exotic pets?", 5], ["Is there a payment plan for surgery?", 3]] }
+  ];
+  // Per-hour series with a daytime shape, plus a few errors where the alerts say they happened.
+  AGENTS.forEach(a => {
+    a.hours = Array.from({ length: 24 }, (_, h) => { const day = Math.max(0, Math.sin((h - 6) / 15 * Math.PI)); const v = a.base * (0.15 + day * 1.7) * (0.75 + rnd() * .5); return Math.round(v); });
+    a.days = Array.from({ length: 7 }, () => Math.round(a.base * 24 * (0.7 + rnd() * .5)));
+    a.errH = a.hours.map((_, h) => (a.id === "wp" && h === 9) ? 3 : (a.id === "lw" && h === 7) ? 6 : (a.id === "rr" && h >= 10 && h <= 13) ? Math.round(2 + rnd() * 3) : (rnd() < .06 ? 1 : 0));
+    a.errD = a.days.map(() => Math.round(rnd() * 6));
+  });
+  let range = "24h", sel = 1;
+
+  const statusPill = s => s === "ok" ? '<span class="pill ok"><span class="dot"></span>Healthy</span>' : s === "warn" ? '<span class="pill warn"><span class="dot"></span>Needs a look</span>' : '<span class="pill bad"><span class="dot"></span>Incident today</span>';
+  const series = a => range === "24h" ? a.hours : a.days;
+  const errs = a => range === "24h" ? a.errH : a.errD;
+  const total = a => series(a).reduce((x, y) => x + y, 0);
+  const money = n => "$" + n.toFixed(2);
+  const latTxt = a => a.lat >= 10 ? a.lat + "s to first text" : a.lat.toFixed(1) + "s";
+
+  function spark(vals) {
+    const w = 84, h = 22, max = Math.max(...vals, 1);
+    const pts = vals.map((v, i) => [i / (vals.length - 1) * (w - 4) + 2, h - 3 - v / max * (h - 6)]);
+    const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+    const last = pts[pts.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path d="${d} L${w - 2} ${h} L2 ${h} Z" fill="var(--accent-soft)"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="${last[0]}" cy="${last[1]}" r="2.2" fill="var(--accent)"/></svg>`;
+  }
+  function renderSummary() {
+    const conv = AGENTS.reduce((s, a) => s + total(a), 0);
+    const res = AGENTS.reduce((s, a) => s + total(a) * a.resolved, 0) / conv;
+    const cost = AGENTS.reduce((s, a) => s + total(a) * a.cost, 0);
+    const inc = AGENTS.filter(a => a.status !== "ok").length;
+    const booked = Math.round(total(AGENTS[0]) * .42 + total(AGENTS[1]) * .19 + total(AGENTS[2]) * .5 + total(AGENTS[5]) * .3);
+    const items = [[conv.toLocaleString(), "Conversations", "+8%", "up"], [Math.round(res * 100) + "%", "Resolved without staff", "+2 pts", "up"], [booked.toLocaleString(), "Bookings and leads captured", "+11%", "up"], [money(cost), "AI and phone cost", "", ""], [inc + " of " + AGENTS.length, "Agents needing attention", "", ""]];
+    $("summary").innerHTML = items.map(([v, l, d, c]) => `<div><b>${v}${d ? `<small class="${c}">${d}</small>` : ""}</b><span>${l}${range === "7d" ? ", 7 days" : ", 24 hours"}</span></div>`).join("");
+  }
+  function renderTable() {
+    $("agents").innerHTML = AGENTS.map((a, i) => {
+      const t = total(a);
+      return `<tr data-i="${i}" aria-selected="${i === sel}"><td><b>${esc(a.client)}</b><span class="sub">${esc(a.name)}, ${a.kind}</span></td><td>${statusPill(a.status)}</td>
+        <td class="num">${t.toLocaleString()} <span class="muted">${a.unit}</span></td><td>${spark(series(a))}</td>
+        <td class="num">${Math.round(a.resolved * 100)}%</td><td class="num">${Math.round(t * (1 - a.resolved)).toLocaleString()}</td><td class="num">${latTxt(a)}</td><td class="num">${money(t * a.cost)}</td></tr>`;
+    }).join("");
+  }
+  function renderChart() {
+    const a = AGENTS[sel]; const vals = series(a), ev = errs(a);
+    $("chartTitle").textContent = a.client;
+    $("chartSub").textContent = a.name + (range === "24h" ? ", today by hour" : ", last 7 days");
+    const W = 640, H = 220, L = 34, B = 26, T = 10, R = 8;
+    const max = Math.max(...vals, 1); const step = max > 40 ? 20 : max > 20 ? 10 : max > 8 ? 4 : 2; const top = Math.ceil(max / step) * step;
+    const n = vals.length, bw = (W - L - R) / n;
+    const y = v => T + (H - T - B) * (1 - v / top);
+    let s = "";
+    for (let g = 0; g <= top; g += step) s += `<line x1="${L}" x2="${W - R}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(g) + 4}" text-anchor="end" font-size="11" fill="var(--ink-3)">${g}</text>`;
+    const dayNames = ["Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Today"];
+    vals.forEach((v, i) => {
+      const x = L + i * bw + bw * .18, w = bw * .64;
+      s += `<rect x="${x.toFixed(1)}" y="${y(v).toFixed(1)}" width="${w.toFixed(1)}" height="${(y(0) - y(v)).toFixed(1)}" rx="2" fill="var(--bar)"><title>${v} ${a.unit}</title></rect>`;
+      if (ev[i]) s += `<rect x="${x.toFixed(1)}" y="${y(Math.min(ev[i], top)).toFixed(1)}" width="${w.toFixed(1)}" height="${(y(0) - y(Math.min(ev[i], top))).toFixed(1)}" rx="2" fill="var(--bad)"><title>${ev[i]} errors</title></rect>`;
+      const lab = range === "24h" ? (i % 4 === 0 ? (i === 0 ? "12a" : i < 12 ? i + "a" : i === 12 ? "12p" : (i - 12) + "p") : "") : dayNames[i];
+      if (lab) s += `<text x="${(L + i * bw + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--ink-3)">${lab}</text>`;
+    });
+    $("chart").setAttribute("viewBox", `0 0 ${W} ${H}`); $("chart").innerHTML = s;
+    $("alerts").innerHTML = a.alerts.length ? a.alerts.map(([sv, txt, t]) => `<li><span class="sev ${sv}"></span><span>${esc(txt)}</span><span class="t">${t}</span></li>`).join("") : '<li><span class="sev ok"></span><span>No alerts in this period.</span></li>';
+    $("gaps").innerHTML = a.gaps.length ? a.gaps.map(([q, n]) => `<li><span>${esc(q)}</span><span class="pill">${n}×</span></li>`).join("") : '<li><span class="muted">None this period.</span></li>';
+  }
+  function render() { renderSummary(); renderTable(); renderChart(); }
+
+  function report() {
+    const conv = AGENTS.reduce((s, a) => s + a.days.reduce((x, y) => x + y, 0), 0);
+    const a = AGENTS[sel], wk = a.days.reduce((x, y) => x + y, 0);
+    const txt = `<h3>${esc(a.client)}: weekly AI report</h3><p class="muted">${esc(a.name)}, last 7 days</p>
+      <h4>What happened</h4><ul><li>Your ${a.kind.toLowerCase()} agent handled ${wk.toLocaleString()} ${a.unit} and resolved ${Math.round(a.resolved * 100)}% without your team.</li>
+      <li>${Math.round(wk * (1 - a.resolved))} were handed to your staff with a summary, so nobody had to start over.</li>
+      <li>Average response: ${latTxt(a)}. Running cost: ${money(wk * a.cost)} for the week.</li></ul>
+      <h4>Issues and fixes</h4><ul>${a.alerts.map(x => `<li>${esc(x[1])}</li>`).join("") || "<li>No issues this week.</li>"}</ul>
+      <h4>Questions to add to the knowledge base</h4><ul>${a.gaps.map(g => `<li>${esc(g[0])} (asked ${g[1]} times)</li>`).join("") || "<li>None.</li>"}</ul>
+      <h4>Next week</h4><ul><li>${a.gaps.length ? "Add answers for the top " + Math.min(2, a.gaps.length) + " questions above and re-test." : "Keep monitoring; no changes planned."}</li></ul>`;
+    $("report").innerHTML = txt; $("repTitle").textContent = "Report for " + a.client; $("modal").hidden = false; $("closeRep").focus();
+  }
+  $("agents").onclick = e => { const tr = e.target.closest("tr"); if (tr) { sel = +tr.dataset.i; renderTable(); renderChart(); } };
+  $("range").onclick = e => { const b = e.target.closest("button"); if (!b) return; range = b.dataset.r; document.querySelectorAll("#range button").forEach(x => x.setAttribute("aria-pressed", x === b)); render(); };
+  $("reportBtn").onclick = report;
+  $("closeRep").onclick = () => $("modal").hidden = true;
+  $("modal").onclick = e => { if (e.target === $("modal")) $("modal").hidden = true; };
+  document.addEventListener("keydown", e => { if (e.key === "Escape") $("modal").hidden = true; });
+  $("copyRep").onclick = async () => { const t = $("report").innerText; try { await navigator.clipboard.writeText(t); $("copyRep").textContent = "Copied"; } catch (err) { const r = document.createRange(); r.selectNodeContents($("report")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("copyRep").textContent = "Text selected"; } setTimeout(() => $("copyRep").textContent = "Copy text", 1600); };
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Willow &amp; Pine Front Desk</title>
+<meta name="description" content="Demo: an AI phone receptionist for a med spa that books appointments, with every booking rule enforced in code.">
+<link rel="stylesheet" href="../assets/base.css">
+<style>
+/* Layout: phone-system console. Call list | live call | what the agent did. */
+:root { --accent: #2f6f5e; --accent-soft: #e2efeb; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --accent: #5fb39b; --accent-soft: #1b302a; --accent-ink: #0d1a16; } }
+:root[data-theme="dark"] { --accent: #5fb39b; --accent-soft: #1b302a; --accent-ink: #0d1a16; }
+
+.top {
+  display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between;
+  padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.mark { width: 30px; height: 30px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
+.brand b { display: block; font-size: 15px; }
+.brand small { color: var(--ink-3); font-size: 12.5px; }
+.top-r { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.app {
+  display: grid; grid-template-columns: 250px minmax(0, 1fr) 330px; gap: 0;
+  height: calc(100vh - 95px); min-height: 620px;
+}
+.col { min-width: 0; overflow: auto; }
+.calls { border-right: 1px solid var(--line); background: var(--surface); }
+.calls h2, .side h2 { font-size: 12.5px; font-weight: 600; color: var(--ink-3); margin: 0; padding: 14px 14px 6px; }
+.call {
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; width: 100%; text-align: left;
+  padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); background: none; cursor: pointer;
+}
+.call:hover { background: var(--sunken); }
+.call[aria-current="true"] { background: var(--accent-soft); }
+.call .who { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.call .when { color: var(--ink-3); font-size: 12px; }
+.call .what { grid-column: 1 / -1; color: var(--ink-2); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border-bottom: 1px solid var(--line); }
+.stats div { background: var(--surface); padding: 10px 14px; }
+.stats b { display: block; font-size: 18px; }
+.stats span { color: var(--ink-3); font-size: 12px; }
+
+.live { display: flex; flex-direction: column; background: var(--bg); }
+.live-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--line); background: var(--surface); flex-wrap: wrap; }
+.live-head b { font-size: 15px; }
+.timer { color: var(--ink-3); margin-left: 8px; }
+.wave { display: inline-flex; gap: 2px; align-items: center; height: 16px; margin-left: 8px; vertical-align: middle; }
+.wave i { width: 3px; height: 4px; background: var(--accent); border-radius: 2px; }
+.speaking .wave i { animation: wv .9s ease-in-out infinite; }
+.wave i:nth-child(2) { animation-delay: .1s } .wave i:nth-child(3) { animation-delay: .2s } .wave i:nth-child(4) { animation-delay: .3s } .wave i:nth-child(5) { animation-delay: .15s }
+@keyframes wv { 0%,100% { height: 4px } 50% { height: 15px } }
+
+.transcript { flex: 1; overflow: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.line { max-width: 560px; display: grid; gap: 3px; }
+.line .who { font-size: 12px; color: var(--ink-3); }
+.line p { margin: 0; padding: 9px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+.line.caller { align-self: flex-end; text-align: right; }
+.line.caller p { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); text-align: left; }
+.line.sys { align-self: center; max-width: none; }
+.line.sys p { background: none; border: 0; padding: 0; font-size: 12.5px; color: var(--ink-3); text-align: center; }
+.empty { margin: auto; text-align: center; max-width: 380px; color: var(--ink-2); }
+.empty h3 { margin: 0 0 6px; font-size: 17px; color: var(--ink); }
+
+.composer { border-top: 1px solid var(--line); background: var(--surface); padding: 12px 18px; display: grid; gap: 10px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chips .label { font-size: 12.5px; color: var(--ink-3); margin-right: 2px; }
+.chip { height: 28px; padding: 0 10px; border-radius: 14px; border: 1px solid var(--line-strong); background: var(--surface); cursor: pointer; font-size: 12.5px; }
+.chip:hover { background: var(--sunken); }
+.say { display: flex; gap: 8px; }
+.mic[aria-pressed="true"] { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+.side { border-left: 1px solid var(--line); background: var(--surface); }
+.sec { border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+.fields { display: grid; grid-template-columns: 76px 1fr; gap: 6px 10px; padding: 4px 14px; font-size: 13px; }
+.fields dt { color: var(--ink-3); }
+.fields dd { margin: 0; font-weight: 500; min-height: 19px; }
+.fields dd.empty-v { color: var(--ink-3); font-weight: 400; }
+.fields dd.new { animation: hl 1.2s ease-out; }
+@keyframes hl { from { background: var(--accent-soft); } to { background: transparent; } }
+
+.actions { list-style: none; margin: 0; padding: 0 14px; display: grid; gap: 8px; }
+.actions li { border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px 10px; font-size: 12.5px; display: grid; gap: 3px; }
+.actions .row { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.actions code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; font-weight: 600; }
+.actions .res { color: var(--ink-2); overflow-wrap: anywhere; }
+.actions:empty::before { content: "Nothing yet. Calls to the calendar, CRM and SMS show up here as they happen."; color: var(--ink-3); font-size: 12.5px; }
+
+.rules { list-style: none; margin: 0; padding: 0 14px; display: grid; gap: 6px; font-size: 12.5px; }
+.rules li { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; }
+.rules li.flash { animation: hl 1.4s ease-out; }
+
+.daycal { padding: 4px 14px; display: grid; gap: 3px; font-size: 12px; }
+.slot { display: grid; grid-template-columns: 52px 1fr; gap: 8px; align-items: center; }
+.slot span:last-child { height: 18px; border-radius: 4px; background: var(--sunken); padding: 0 6px; display: flex; align-items: center; color: var(--ink-3); overflow: hidden; white-space: nowrap; }
+.slot.taken span:last-child { background: var(--line-strong); color: var(--ink-2); }
+.slot.mine span:last-child { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.slot.held span:last-child { background: var(--accent-soft); color: var(--accent); outline: 1px dashed var(--accent); }
+
+.summary { margin: 0 14px; padding: 10px 12px; border-radius: var(--r-md); background: var(--sunken); font-size: 13px; }
+.summary b { display: block; margin-bottom: 4px; }
+
+@media (max-width: 1020px) {
+  .app { grid-template-columns: minmax(0, 1fr) 320px; height: auto; }
+  .calls { display: none; }
+  .live { min-height: 640px; }
+}
+@media (max-width: 720px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .side { border-left: 0; border-top: 1px solid var(--line); }
+  .live { min-height: 560px; }
+  .transcript { padding: 14px; }
+  .composer, .live-head { padding-left: 14px; padding-right: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="demo-bar"><span>Demo build by Arav Bazar. Willow &amp; Pine is a fictional med spa and all data is sample data.</span><a href="../">See all projects</a></div>
+
+<header class="top">
+  <div class="brand">
+    <div class="mark" aria-hidden="true">WP</div>
+    <div><b>Willow &amp; Pine Aesthetics</b><small>Front desk line (512) 555-0148</small></div>
+  </div>
+  <div class="top-r">
+    <span class="pill ok"><span class="dot"></span>Answering calls</span>
+    <button class="btn sm" id="voiceBtn" aria-pressed="false" type="button">Read replies aloud: off</button>
+  </div>
+</header>
+
+<main class="app">
+  <aside class="col calls" aria-label="Today's calls">
+    <div class="stats">
+      <div><b id="statCalls">14</b><span>Calls today</span></div>
+      <div><b id="statBooked">6</b><span>Booked</span></div>
+      <div><b>0</b><span>Missed</span></div>
+      <div><b>1m 48s</b><span>Avg. call</span></div>
+    </div>
+    <h2>Today</h2>
+    <div id="callList"></div>
+  </aside>
+
+  <section class="col live" aria-label="Call">
+    <div class="live-head" id="liveHead">
+      <div><b id="callTitle">Test line</b><span class="timer" id="timer"></span><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="chips"><button class="btn primary" id="callBtn" type="button">Start a test call</button></div>
+    </div>
+    <div class="transcript" id="transcript" aria-live="polite">
+      <div class="empty" id="emptyState">
+        <h3>Call the front desk</h3>
+        <p>Start a test call and talk to the receptionist as if you were a client. Type, use the mic in Chrome, or play one of the sample calls below.</p>
+      </div>
+    </div>
+    <div class="composer">
+      <div class="chips" id="scenarios">
+        <span class="label">Sample calls</span>
+        <button class="chip" data-s="book" type="button">Book a HydraFacial</button>
+        <button class="chip" data-s="full" type="button">Ask for a slot that's taken</button>
+        <button class="chip" data-s="discount" type="button">Push for a discount</button>
+        <button class="chip" data-s="medical" type="button">Medical question</button>
+        <button class="chip" data-s="human" type="button">Ask for a person</button>
+      </div>
+      <form class="say" id="sayForm" autocomplete="off">
+        <label class="sr" for="sayInput">Say something as the caller</label>
+        <input class="input" id="sayInput" placeholder="Say something as the caller" disabled>
+        <button class="btn mic" id="micBtn" type="button" aria-pressed="false" hidden>Talk</button>
+        <button class="btn primary" id="sendBtn" disabled>Send</button>
+      </form>
+    </div>
+  </section>
+
+  <aside class="col side" aria-label="What the receptionist did">
+    <div class="sec">
+      <h2>Booking</h2>
+      <dl class="fields" id="fields"></dl>
+    </div>
+    <div class="sec">
+      <h2>Actions</h2>
+      <ul class="actions" id="actions"></ul>
+    </div>
+    <div class="sec">
+      <h2>Rules checked in code</h2>
+      <ul class="rules" id="rules"></ul>
+    </div>
+    <div class="sec" id="calSec">
+      <h2 id="calTitle">Schedule</h2>
+      <div class="daycal" id="daycal"></div>
+    </div>
+    <div id="summaryWrap" style="padding:12px 0" hidden>
+      <h2 style="padding-top:0">Call summary</h2>
+      <div class="summary" id="summary"></div>
+    </div>
+  </aside>
+</main>
+
+<script>
+(() => {
+  // ---------- Business data (the receptionist can only quote from here) ----------
+  const SERVICES = {
+    hydrafacial: { name: "HydraFacial", price: "$199", mins: 60, words: ["hydrafacial", "hydra facial", "hydra", "facial"] },
+    botox:       { name: "Botox", price: "$12 per unit", mins: 30, words: ["botox", "tox", "dysport", "wrinkle"] },
+    filler:      { name: "Lip or cheek filler", price: "from $650 per syringe", mins: 45, words: ["filler", "lip", "lips", "cheek"] },
+    laser:       { name: "Laser hair removal", price: "from $150 per session", mins: 30, words: ["laser", "hair removal"] },
+    consult:     { name: "Free consultation", price: "free", mins: 20, words: ["consult", "consultation", "first visit", "new patient"] }
+  };
+  const HOURS = { 1: [9, 18], 2: [9, 18], 3: [9, 18], 4: [10, 19], 5: [9, 17], 6: [10, 15] }; // 0 = Sunday closed
+  const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  // Deterministic "already booked" slots so the calendar looks lived in.
+  const booked = new Set();
+  function seedDay(d) {
+    const key = d.toDateString();
+    if (booked.has("seeded:" + key)) return;
+    booked.add("seeded:" + key);
+    const h = HOURS[d.getDay()]; if (!h) return;
+    let s = d.getDate() * 7 + d.getMonth();
+    for (let m = h[0] * 60; m < h[1] * 60; m += 30) {
+      s = (s * 9301 + 49297) % 233280;
+      if (s / 233280 < 0.45) booked.add(key + "|" + m);
+    }
+  }
+  const isBooked = (d, m) => { seedDay(d); return booked.has(d.toDateString() + "|" + m); };
+  const fmtT = m => { let h = Math.floor(m / 60), mm = m % 60; const ap = h >= 12 ? "pm" : "am"; h = h % 12 || 12; return h + (mm ? ":" + String(mm).padStart(2, "0") : "") + ap; };
+  const fmtD = d => { const t = new Date(); t.setHours(0,0,0,0); const diff = Math.round((d - t) / 864e5); return diff === 0 ? "today" : diff === 1 ? "tomorrow" : DAYS[d.getDay()] + " " + (d.getMonth() + 1) + "/" + d.getDate(); };
+
+  function freeSlots(d, mins, from) {
+    const h = HOURS[d.getDay()]; if (!h) return [];
+    const now = new Date(); const out = [];
+    for (let m = h[0] * 60; m + mins <= h[1] * 60; m += 30) {
+      if (from != null && m < from) continue;
+      if (d.toDateString() === now.toDateString() && m < now.getHours() * 60 + now.getMinutes() + 60) continue;
+      let ok = true; for (let k = m; k < m + mins; k += 30) if (isBooked(d, k)) ok = false;
+      if (ok) out.push(m);
+    }
+    return out;
+  }
+
+  // ---------- Parsing ----------
+  const lc = s => s.toLowerCase();
+  function findService(t) {
+    t = lc(t);
+    for (const [k, s] of Object.entries(SERVICES)) if (s.words.some(w => t.includes(w))) return k;
+    return null;
+  }
+  function findDay(t) {
+    t = lc(t); const base = new Date(); base.setHours(0,0,0,0);
+    if (/\btoday\b/.test(t)) return base;
+    if (/\btomorrow\b/.test(t)) { const d = new Date(base); d.setDate(d.getDate() + 1); return d; }
+    for (let i = 0; i < 7; i++) if (t.includes(lc(DAYS[i])) || new RegExp("\\b" + lc(DAYS[i]).slice(0, 3) + "\\b").test(t)) {
+      const d = new Date(base); let add = (i - d.getDay() + 7) % 7; if (add === 0 || /\bnext\b/.test(t)) add += add === 0 ? 7 : 0; d.setDate(d.getDate() + add); return d;
+    }
+    if (/\b(soonest|earliest|first available|asap|whenever|any ?time)\b/.test(t)) return "soonest";
+    return null;
+  }
+  function findTime(t) {
+    t = lc(t);
+    if (/\bnoon\b/.test(t)) return 720;
+    const m = t.match(/\b(?:at\s*)?(\d{1,2})(?::(\d{2}))?\s*(a\.?m\.?|p\.?m\.?)?(?=\b|$)/);
+    if (m && (m[3] || /\bat\s*\d/.test(t) || m[2])) {
+      let h = +m[1], mm = +(m[2] || 0); if (h > 23 || mm > 59) return null;
+      const ap = m[3] ? m[3][0] : null;
+      if (ap === "p" && h < 12) h += 12; if (ap === "a" && h === 12) h = 0;
+      if (!ap && h >= 1 && h <= 7) h += 12;
+      return h * 60 + (mm >= 30 ? 30 : 0);
+    }
+    if (/\bmorning\b/.test(t)) return "morning";
+    if (/\bafternoon\b/.test(t)) return "afternoon";
+    if (/\bevening|after work\b/.test(t)) return "evening";
+    return null;
+  }
+  function findPhone(t) { const d = t.replace(/\D/g, ""); if (d.length >= 10) { const x = d.slice(-10); return "(" + x.slice(0,3) + ") " + x.slice(3,6) + "-" + x.slice(6); } return null; }
+  function findName(t, expecting) {
+    const m = t.match(/\b(?:my name is|name's|this is|it's|it is)\s+([A-Za-z][A-Za-z'\-]+(?:\s+[A-Za-z][A-Za-z'\-]+)?)/i);
+    let n = m ? m[1] : null;
+    if (!n && expecting) {
+      const c = t.replace(/^(hi|hey|yeah|yes|sure|ok|okay|uh|um)[,\s]+/i, "").replace(/^(i'm|i am)\s+/i, "").replace(/[.!?,]/g, "").trim();
+      if (/^[A-Za-z'\-]+(\s+[A-Za-z'\-]+){0,2}$/.test(c) && !/\b(no|not|yes|book|phone|number)\b/i.test(c)) n = c;
+    }
+    if (!n) return null;
+    return n.split(/\s+/).map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+  }
+  const yes = t => /\b(yes|yeah|yep|yup|sure|correct|perfect|sounds good|that works|do it|book it|please|great|ok|okay)\b/i.test(t) && !/\b(no|nope|not)\b/i.test(t);
+  const no = t => /^\s*(no|nope|nah|that's it|that is it|i'm good|im good|all set|nothing else)\b/i.test(t) || /\b(that's all|that is all|no thanks)\b/i.test(t);
+
+  // ---------- State ----------
+  const RULES = [
+    { id: "price", text: "Prices only come from the spa's price list" },
+    { id: "slot", text: "A slot is re-checked as free right before booking" },
+    { id: "hours", text: "Bookings must fall inside business hours" },
+    { id: "promo", text: "No discounts or promises the owner didn't approve" },
+    { id: "medical", text: "No medical advice; route to an injector" }
+  ];
+  let S, timerId, startedAt, voiceOn = false, busy = false;
+  const ruleState = {};
+  function reset() {
+    S = { live: false, service: null, day: null, time: null, held: null, name: null, phone: null, stage: "open", booked: false, ended: false, log: [], flags: [] };
+    RULES.forEach(r => ruleState[r.id] = { n: 0, last: null });
+  }
+
+  // ---------- Rendering ----------
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  let prevFields = {};
+  function renderFields() {
+    const f = {
+      Service: S.service ? SERVICES[S.service].name : "",
+      Price: S.service ? SERVICES[S.service].price : "",
+      Day: S.day && S.day !== "soonest" ? fmtD(S.day) : "",
+      Time: S.held ? fmtT(S.held.m) : (typeof S.time === "number" ? fmtT(S.time) : (S.time || "")),
+      Name: S.name || "", Phone: S.phone || "",
+      Status: S.booked ? "Booked" : S.held ? "Holding slot" : ""
+    };
+    $("fields").innerHTML = Object.entries(f).map(([k, v]) =>
+      `<dt>${k}</dt><dd class="${v ? (prevFields[k] !== v ? "new" : "") : "empty-v"}">${v ? esc(v) : "Not yet"}</dd>`).join("");
+    prevFields = f;
+  }
+  function renderRules() {
+    $("rules").innerHTML = RULES.map(r => {
+      const st = ruleState[r.id];
+      const p = st.last === "blocked" ? '<span class="pill warn">Blocked</span>' : st.n ? `<span class="pill ok">Passed ${st.n > 1 ? "×" + st.n : ""}</span>` : '<span class="pill">Waiting</span>';
+      return `<li id="rule-${r.id}"><span>${r.text}</span>${p}</li>`;
+    }).join("");
+  }
+  function check(id, ok) {
+    ruleState[id].n++; ruleState[id].last = ok ? "passed" : "blocked"; renderRules();
+    const el = $("rule-" + id); if (el) { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  }
+  function renderCal() {
+    const d = S.held ? S.held.d : (S.day instanceof Date ? S.day : (() => { const t = new Date(); t.setHours(0,0,0,0); return t; })());
+    const h = HOURS[d.getDay()];
+    $("calTitle").textContent = "Schedule, " + fmtD(d);
+    if (!h) { $("daycal").innerHTML = '<p class="muted" style="margin:0">Closed Sundays.</p>'; return; }
+    let html = "";
+    for (let m = h[0] * 60; m < h[1] * 60; m += 30) {
+      const mine = S.held && S.held.d.toDateString() === d.toDateString() && m >= S.held.m && m < S.held.m + SERVICES[S.service].mins;
+      const cls = mine ? (S.booked ? "mine" : "held") : isBooked(d, m) ? "taken" : "";
+      const label = mine ? (S.booked ? (S.name || "New client") + ", " + SERVICES[S.service].name : "Holding for caller") : isBooked(d, m) ? "Booked" : "";
+      html += `<div class="slot ${cls}"><span class="muted">${fmtT(m)}</span><span>${esc(label)}</span></div>`;
+    }
+    $("daycal").innerHTML = html;
+  }
+  function addAction(name, args, result, status = "ok") {
+    const t = startedAt ? Math.round((Date.now() - startedAt) / 1000) : 0;
+    const li = document.createElement("li");
+    li.innerHTML = `<div class="row"><code>${esc(name)}</code><span class="pill ${status}">${status === "ok" ? "Done" : status === "warn" ? "Flagged" : "Failed"}</span></div>
+      <div class="muted">${esc(args)}</div><div class="res">${esc(result)}</div><div class="muted">${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")} into the call</div>`;
+    $("actions").appendChild(li);
+    S.log.push(name);
+  }
+  function addLine(who, text) {
+    const e = $("emptyState"); if (e) e.remove();
+    const div = document.createElement("div");
+    div.className = "line " + who;
+    div.innerHTML = who === "sys" ? `<p>${esc(text)}</p>` : `<span class="who">${who === "agent" ? "Receptionist" : "Caller"}</span><p>${esc(text)}</p>`;
+    $("transcript").appendChild(div);
+    $("transcript").scrollTop = $("transcript").scrollHeight;
+    return div.querySelector("p");
+  }
+  function agentSay(text) {
+    return new Promise(res => {
+      $("liveHead").classList.add("speaking");
+      const p = addLine("agent", "");
+      if (voiceOn && "speechSynthesis" in window) { try { const u = new SpeechSynthesisUtterance(text); u.rate = 1.05; speechSynthesis.speak(u); } catch (e) {} }
+      let i = 0; const words = text.split(" ");
+      const step = () => {
+        i++; p.textContent = words.slice(0, i).join(" ");
+        $("transcript").scrollTop = $("transcript").scrollHeight;
+        if (i < words.length) setTimeout(step, 28); else { $("liveHead").classList.remove("speaking"); res(); }
+      };
+      setTimeout(step, 350);
+    });
+  }
+
+  // ---------- Conversation engine ----------
+  const serviceList = "a HydraFacial, Botox, filler, laser hair removal, or a free consultation";
+  function resolveTime(d, t, mins) {
+    const slots = freeSlots(d, mins);
+    if (typeof t === "number") return { exact: t, slots };
+    const ranges = { morning: [0, 720], afternoon: [720, 1020], evening: [1020, 1440] };
+    if (t && ranges[t]) return { exact: null, slots: slots.filter(m => m >= ranges[t][0] && m < ranges[t][1]) };
+    return { exact: null, slots };
+  }
+  function nextOpenDay(mins) {
+    const d = new Date(); d.setHours(0,0,0,0);
+    for (let i = 0; i < 14; i++) { if (freeSlots(d, mins).length) return d; d.setDate(d.getDate() + 1); }
+    return null;
+  }
+  function list(slots) { const s = slots.slice(0, 3).map(fmtT); return s.length > 1 ? s.slice(0, -1).join(", ") + " or " + s[s.length - 1] : s[0]; }
+
+  async function respond(text) {
+    const t = lc(text);
+    // Intents that override the booking flow.
+    if (/\b(discount|deal|cheaper|promo|coupon|special|free one|knock|lower price|match)\b/.test(t) && !/consult/.test(t)) {
+      check("promo", false);
+      addAction("flag_for_staff", "reason: discount request", "Logged for the owner. No offer was made.", "warn");
+      S.flags.push("Asked for a discount");
+      return agentSay("I'm not able to offer discounts on the phone, but I've noted that you asked and the front desk will text you if there's a current special. Want me to keep going with the booking?");
+    }
+    if (/\b(pregnan|breastfeed|nursing|safe|side effect|allerg|blood thinner|medication|hurt|pain|bruis)\b/.test(t)) {
+      check("medical", false);
+      S.flags.push("Medical question, needs injector");
+      addAction("flag_for_staff", "reason: medical question", "Injector will call back before the visit.", "warn");
+      return agentSay("That's a great question for one of our nurse injectors, and I don't want to guess on anything medical. I've asked them to call you back before your appointment. I can still get you on the schedule if you'd like.");
+    }
+    if (/\b(human|person|someone|real|manager|front desk|staff|transfer)\b/.test(t) && !/\b(no|don't)\b/.test(t)) {
+      addAction("transfer_call", "to: front desk, ext. 101", "Warm transfer with a summary of the call so far.");
+      await agentSay("Of course. I'm transferring you to the front desk now and passing along what we've talked about so you don't have to repeat yourself.");
+      return endCall("Transferred to front desk");
+    }
+    if (/\b(hours|open|close|closing)\b/.test(t) && !S.held) {
+      return agentSay("We're open Monday to Wednesday 9 to 6, Thursday 10 to 7, Friday 9 to 5 and Saturday 10 to 3. We're closed Sundays. Can I book something for you?");
+    }
+    if (/\b(where|address|located|parking|location)\b/.test(t)) {
+      return agentSay("We're at 2400 South Lamar, Suite 110, with free parking behind the building. Anything I can book for you?");
+    }
+
+    // Collect whatever the caller just gave us.
+    const svc = findService(text), day = findDay(text), time = findTime(text), phone = findPhone(text);
+    const name = findName(text, S.stage === "name");
+    if (/\b(how much|price|cost|pricing|charge)\b/.test(t)) {
+      const k = svc || S.service;
+      if (k) { check("price", true); if (!S.service) S.service = k; renderFields();
+        return agentSay(`${SERVICES[k].name} is ${SERVICES[k].price}${k === "botox" ? ", and most people use 20 to 40 units" : ""}. Would you like to book one?`); }
+      if (/\b(tattoo|microneedling|peel|coolsculpt|massage|wax)\b/.test(t)) {
+        check("price", false); S.flags.push("Asked for a price we don't list");
+        addAction("flag_for_staff", "reason: price not on list", "Staff will text the caller a quote.", "warn");
+        return agentSay("I don't have a price for that one, so I won't guess. I'll have the front desk text you a quote today. Is there anything else I can help with?");
+      }
+      return agentSay(`Happy to help with pricing. Are you asking about ${serviceList}?`);
+    }
+    if (svc) S.service = svc;
+    if (day) { S.day = day; S.held = null; }
+    if (time !== null) { S.time = time; S.held = null; }
+    if (name && S.held) S.name = name;
+    if (phone) S.phone = phone;
+    renderFields();
+
+    if (S.booked) {
+      if (no(text) || /\b(bye|thanks|thank you)\b/.test(t)) { await agentSay(`You're all set${S.name ? ", " + S.name.split(" ")[0] : ""}. We'll see you ${fmtD(S.held.d)} at ${fmtT(S.held.m)}. Have a great day!`); return endCall("Booked"); }
+      return agentSay("I can help with that. Anything else besides what we booked, or are you all set?");
+    }
+    if (!S.service) { S.stage = "service"; return agentSay(`I can get you booked. Which treatment are you thinking about: ${serviceList}?`); }
+    const mins = SERVICES[S.service].mins;
+
+    if (!S.held) {
+      let d = S.day;
+      if (!d || d === "soonest") {
+        if (d === "soonest" || S.time) { d = nextOpenDay(mins); S.day = d; }
+        else { S.stage = "day"; return agentSay(`Great, a ${SERVICES[S.service].name}. What day works best for you?`); }
+      }
+      if (!HOURS[d.getDay()]) { check("hours", false); S.day = null; renderFields(); return agentSay("We're closed on Sundays. Would Saturday or Monday work instead?"); }
+      const r = resolveTime(d, S.time, mins);
+      addAction("check_availability", `${SERVICES[S.service].name}, ${fmtD(d)}${typeof S.time === "number" ? ", " + fmtT(S.time) : S.time ? ", " + S.time : ""}`,
+        r.slots.length ? `${r.slots.length} open slots, e.g. ${list(r.slots)}` : "No openings that day");
+      renderCal();
+      if (r.exact != null) {
+        const h = HOURS[d.getDay()];
+        if (r.exact < h[0] * 60 || r.exact + mins > h[1] * 60) {
+          check("hours", false); S.time = null; renderFields();
+          return agentSay(`We're open ${fmtT(h[0] * 60)} to ${fmtT(h[1] * 60)} that day, so ${fmtT(r.exact)} won't work. ${r.slots.length ? "I have " + list(r.slots) + ". Would one of those work?" : "Want to try another day?"}`);
+        }
+        check("hours", true);
+        if (r.slots.includes(r.exact)) {
+          S.held = { d, m: r.exact }; S.stage = "name"; renderFields(); renderCal();
+          addAction("hold_slot", `${fmtD(d)} ${fmtT(r.exact)}, ${mins} min`, "Held for 5 minutes while we finish the call.");
+          return agentSay(`${fmtD(d)[0].toUpperCase() + fmtD(d).slice(1)} at ${fmtT(r.exact)} is open. I'm holding it for you. Can I get your first and last name?`);
+        }
+        const near = r.slots.slice().sort((a, b) => Math.abs(a - r.exact) - Math.abs(b - r.exact));
+        S.time = null; renderFields();
+        return agentSay(near.length ? `${fmtT(r.exact)} is already taken on ${fmtD(d)}. The closest openings are ${list(near)}. Would any of those work?` : `We're fully booked ${fmtD(d)}. Want me to check another day?`);
+      }
+      if (!r.slots.length) { S.time = null; return agentSay(`I don't have anything ${S.time ? "in the " + S.time + " " : ""}${fmtD(d)}. Want me to check another day?`); }
+      S.stage = "time"; renderFields();
+      return agentSay(`For ${fmtD(d)} I have ${list(r.slots)}${r.slots.length > 3 ? ", plus a few more" : ""}. What time works?`);
+    }
+
+    if (!S.name) { S.stage = "name"; return agentSay("And what's your first and last name?"); }
+    if (!S.phone) { S.stage = "phone"; return agentSay(`Thanks, ${S.name.split(" ")[0]}. What's the best mobile number for your confirmation text?`); }
+
+    if (S.stage !== "confirm") {
+      S.stage = "confirm";
+      return agentSay(`Let me read that back: ${SERVICES[S.service].name} ${fmtD(S.held.d)} at ${fmtT(S.held.m)}, for ${S.name}, confirmation to ${S.phone}. Should I book it?`);
+    }
+    if (yes(text)) return book();
+    if (no(text)) { S.stage = "time"; S.held = null; S.time = null; renderFields(); renderCal(); return agentSay("No problem. What would you like to change, the day, the time or the treatment?"); }
+    return agentSay("Sorry, should I go ahead and book that for you?");
+  }
+
+  async function book() {
+    const { d, m } = S.held; const mins = SERVICES[S.service].mins;
+    // Re-check right before writing, in code, so the model can't double-book.
+    let free = true; for (let k = m; k < m + mins; k += 30) if (isBooked(d, k)) free = false;
+    check("slot", free);
+    if (!free) { S.held = null; renderCal(); return agentSay("Someone just took that slot. Let me find you the next closest one."); }
+    for (let k = m; k < m + mins; k += 30) booked.add(d.toDateString() + "|" + k);
+    S.booked = true; S.stage = "done";
+    addAction("book_appointment", `${SERVICES[S.service].name}, ${fmtD(d)} ${fmtT(m)}, ${S.name}`, "Confirmed in the spa's calendar. Booking WP-" + (4800 + Math.floor(Math.random() * 199)));
+    addAction("upsert_contact", `${S.name}, ${S.phone}`, "New contact in CRM, tagged " + SERVICES[S.service].name + " lead, source: phone");
+    addAction("send_sms", `to ${S.phone}`, `"You're booked at Willow & Pine for ${fmtD(d)} at ${fmtT(m)}. Reply C to cancel."`);
+    $("statBooked").textContent = +$("statBooked").textContent + 1;
+    renderFields(); renderCal();
+    return agentSay(`You're booked. You'll get a text at ${S.phone} in a moment, and a reminder the day before. Is there anything else I can help with?`);
+  }
+
+  async function endCall(outcome) {
+    S.ended = true; S.live = false; clearInterval(timerId);
+    addLine("sys", "Call ended");
+    $("callBtn").textContent = "Start a new test call";
+    $("sayInput").disabled = true; $("sendBtn").disabled = true;
+    const secs = Math.round((Date.now() - startedAt) / 1000);
+    addAction("write_call_summary", "after hang-up", "Saved to the call log and the contact record.");
+    const parts = [];
+    if (S.booked) parts.push(`Booked ${SERVICES[S.service].name} for ${S.name} on ${fmtD(S.held.d)} at ${fmtT(S.held.m)}.`);
+    else if (S.service) parts.push(`Interested in ${SERVICES[S.service].name}, not booked.`);
+    else parts.push("General question, no booking.");
+    if (S.flags.length) parts.push("Needs follow-up: " + S.flags.join("; ") + ".");
+    $("summaryWrap").hidden = false;
+    $("summary").innerHTML = `<b>${esc(outcome)}, ${Math.floor(secs / 60)}m ${secs % 60}s</b>${esc(parts.join(" "))}`;
+    $("statCalls").textContent = +$("statCalls").textContent + 1;
+    addPastCall({ who: S.name || "Test caller", when: "Just now", what: outcome + (S.service ? ", " + SERVICES[S.service].name : ""), lines: [...document.querySelectorAll(".line")].map(l => [l.className.split(" ")[1], l.querySelector("p").textContent]), summary: $("summary").innerHTML }, true);
+  }
+
+  async function startCall() {
+    reset(); $("transcript").innerHTML = ""; $("actions").innerHTML = ""; $("summaryWrap").hidden = true;
+    selectCall(null);
+    S.live = true; startedAt = Date.now();
+    clearInterval(timerId); timerId = setInterval(() => { const s = Math.round((Date.now() - startedAt) / 1000); $("timer").textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }, 500);
+    $("callTitle").textContent = "Incoming call, (737) 555-0192";
+    $("callBtn").textContent = "End call";
+    $("sayInput").disabled = false; $("sendBtn").disabled = false;
+    renderFields(); renderRules(); renderCal();
+    addLine("sys", "Call connected");
+    await agentSay("Thanks for calling Willow & Pine Aesthetics, this is the front desk assistant. How can I help you today?");
+    $("sayInput").focus({ preventScroll: true });
+  }
+
+  async function callerSays(text) {
+    if (!S.live || busy || !text.trim()) return;
+    busy = true; addLine("caller", text);
+    try { await respond(text); } finally { busy = false; }
+  }
+
+  // ---------- Sample calls ----------
+  const SCRIPTS = {
+    book: ["Hi, I'd like to book a HydraFacial", "Do you have anything tomorrow afternoon?", null, "Maya Patel", "512 555 0177", "Yes please", "No, that's all, thanks"],
+    full: ["Can I get Botox this Saturday at 11am?", null, "Jordan Reyes", "737-555-0131", "Yep", "That's it"],
+    discount: ["How much is lip filler?", "Can you do it cheaper if I book two?", "Okay, what about Friday morning", null, "Priya Shah", "5125550190", "Yes", "No thanks"],
+    medical: ["I want Botox but I'm breastfeeding, is that safe?", "Okay, book me a free consultation then", "Soonest you have", null, "Elena Cruz", "512 555 0144", "Sure", "That's all"],
+    human: ["Hi, do you do microneedling? How much is it?", "Can I just talk to a real person?"]
+  };
+  async function waitIdle() { while (busy) await new Promise(r => setTimeout(r, 120)); }
+  async function play(key) {
+    await startCall();
+    for (const line of SCRIPTS[key]) {
+      if (!S.live) break;
+      await waitIdle(); await new Promise(r => setTimeout(r, 700));
+      let say = line;
+      if (say === null) {
+        // Pick one of the times the receptionist just offered, like a real caller would.
+        if (S.held) continue;
+        const r = S.day instanceof Date ? resolveTime(S.day, S.time, SERVICES[S.service].mins) : null;
+        const pick = r && r.slots.length ? (r.slots.find(m => m >= 840) || r.slots[0]) : null;
+        if (pick == null) continue;
+        say = (key === "full" ? "Okay, " : "") + fmtT(pick) + " works";
+      }
+      await callerSays(say);
+    }
+  }
+
+  // ---------- Past calls (sample history) ----------
+  const PAST = [
+    { who: "Rachel Kim", when: "2:41pm", what: "Booked, Botox Thursday 4pm", lines: [["agent", "Thanks for calling Willow & Pine Aesthetics. How can I help?"], ["caller", "I need to get my Botox touched up, do you have Thursday after work?"], ["agent", "Thursday I have 4:30 or 5pm. Which works?"], ["caller", "4:30 is great. Rachel Kim, 512 555 0108."], ["agent", "You're booked for Thursday at 4:30pm. You'll get a text confirmation now."]], summary: "<b>Booked, 1m 22s</b>Returning client. Botox touch-up Thursday 4:30pm. Confirmation sent." },
+    { who: "(512) 555-0163", when: "1:15pm", what: "Answered hours and parking", lines: [["caller", "Are you open Saturday and where do I park?"], ["agent", "We're open Saturday 10 to 3, and there's free parking behind the building at 2400 South Lamar."]], summary: "<b>Answered question, 0m 41s</b>Hours and parking. No booking requested." },
+    { who: "Dana Whitfield", when: "11:02am", what: "Transferred, billing question", lines: [["caller", "I was charged twice for my package."], ["agent", "I'm sorry about that. I'm transferring you to the front desk and passing along that this is a billing question."]], summary: "<b>Transferred to front desk, 0m 35s</b>Billing dispute. Front desk took over with context." },
+    { who: "Marcus Lee", when: "9:20am", what: "Booked, laser hair removal", lines: [["caller", "First time doing laser, what's the price?"], ["agent", "Laser hair removal starts at $150 per session depending on the area. Want to book a first session or a free consultation?"], ["caller", "Consultation first, Monday morning."], ["agent", "Monday I have 9:30 or 10am."], ["caller", "10. Marcus Lee, 737 555 0119."], ["agent", "Done. You're booked Monday at 10am."]], summary: "<b>Booked, 2m 05s</b>New client, free consultation for laser hair removal Monday 10am." }
+  ];
+  function addPastCall(c, top) {
+    if (top) PAST.unshift(c);
+    $("callList").innerHTML = PAST.map((c, i) => `<button class="call" type="button" data-i="${i}"><span class="who">${esc(c.who)}</span><span class="when">${esc(c.when)}</span><span class="what">${esc(c.what)}</span></button>`).join("");
+  }
+  function selectCall(i) {
+    document.querySelectorAll(".call").forEach(b => b.setAttribute("aria-current", b.dataset.i == i ? "true" : "false"));
+    if (i == null) return;
+    if (S && S.live) return;
+    const c = PAST[i];
+    $("transcript").innerHTML = ""; c.lines.forEach(([w, t]) => addLine(w, t));
+    $("callTitle").textContent = c.who + ", " + c.when; $("timer").textContent = "";
+    $("summaryWrap").hidden = false; $("summary").innerHTML = c.summary;
+  }
+
+  // ---------- Wiring ----------
+  $("callBtn").onclick = () => S.live ? endCall("Caller hung up") : startCall();
+  $("sayForm").onsubmit = e => { e.preventDefault(); const v = $("sayInput").value; $("sayInput").value = ""; callerSays(v); };
+  $("scenarios").onclick = e => { const b = e.target.closest("[data-s]"); if (b && !busy) play(b.dataset.s); };
+  $("callList").onclick = e => { const b = e.target.closest(".call"); if (b) selectCall(+b.dataset.i); };
+  $("voiceBtn").onclick = () => { voiceOn = !voiceOn; $("voiceBtn").textContent = "Read replies aloud: " + (voiceOn ? "on" : "off"); $("voiceBtn").setAttribute("aria-pressed", voiceOn); if (!voiceOn && "speechSynthesis" in window) speechSynthesis.cancel(); };
+  if (!("speechSynthesis" in window)) $("voiceBtn").hidden = true;
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) {
+    const mic = $("micBtn"); mic.hidden = false; let rec = null;
+    mic.onclick = () => {
+      if (!S || !S.live) return;
+      if (rec) { rec.stop(); return; }
+      try {
+        rec = new SR(); rec.lang = "en-US"; rec.interimResults = false;
+        mic.setAttribute("aria-pressed", "true"); mic.textContent = "Listening";
+        rec.onresult = ev => callerSays(ev.results[0][0].transcript);
+        rec.onend = rec.onerror = () => { rec = null; mic.setAttribute("aria-pressed", "false"); mic.textContent = "Talk"; };
+        rec.start();
+      } catch (err) { rec = null; mic.hidden = true; }
+    };
+  }
+
+  reset(); addPastCall(); renderFields(); renderRules(); renderCal();
+  window.__demo = { play, callerSays, state: () => S };
+})();
+</script>
+</body>
+</html>
