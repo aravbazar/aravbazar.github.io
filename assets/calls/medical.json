@@ -1,0 +1,69 @@
+{
+ "duration": 43.62,
+ "lines": [
+  {
+   "who": "a",
+   "text": "Thanks for calling Willow and Pine, this is Ava. How can I help?",
+   "start": 0.0,
+   "end": 3.58
+  },
+  {
+   "who": "c",
+   "text": "Hi. So I'm breastfeeding right now. Is it, um, safe for me to get Botox?",
+   "start": 4.08,
+   "end": 11.4
+  },
+  {
+   "who": "a",
+   "text": "That's a really good question, and honestly, it's one for our nurse injector, not me. I don't want to guess on anything medical. I can have her call you back today. Would that help?",
+   "start": 11.9,
+   "end": 21.71,
+   "tool": {
+    "t": "rule_check",
+    "d": "medical question",
+    "r": "No medical advice. Routed to nurse injector."
+   }
+  },
+  {
+   "who": "c",
+   "text": "Yeah, that would be great.",
+   "start": 22.11,
+   "end": 23.86
+  },
+  {
+   "who": "a",
+   "text": "Okay. What's your name, and is this the best number for her to reach you?",
+   "start": 24.21,
+   "end": 27.82
+  },
+  {
+   "who": "c",
+   "text": "Elena Cruz, and yes, this number.",
+   "start": 28.22,
+   "end": 31.42
+  },
+  {
+   "who": "a",
+   "text": "Perfect, Elena. I've sent her your question, and she usually calls back within a couple of hours. Anything else I can help with?",
+   "start": 31.82,
+   "end": 38.94,
+   "tool": {
+    "t": "create_task",
+    "d": "Nurse callback for Elena Cruz",
+    "r": "Assigned to injector, due today"
+   }
+  },
+  {
+   "who": "c",
+   "text": "No, that's it. Thank you!",
+   "start": 39.34,
+   "end": 41.33
+  },
+  {
+   "who": "a",
+   "text": "You're welcome. Talk soon!",
+   "start": 41.63,
+   "end": 43.12
+  }
+ ]
+}

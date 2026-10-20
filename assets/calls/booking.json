@@ -1,0 +1,96 @@
+{
+ "duration": 45.81,
+ "lines": [
+  {
+   "who": "a",
+   "text": "Thanks for calling Willow and Pine, this is Ava. How can I help?",
+   "start": 0.0,
+   "end": 3.58
+  },
+  {
+   "who": "c",
+   "text": "Hi, um, yeah. I was wondering if you had anything open for a HydraFacial this week?",
+   "start": 4.08,
+   "end": 9.72
+  },
+  {
+   "who": "a",
+   "text": "Oh, for sure. Let me take a look. Okay, I've got Thursday at two thirty, or Friday morning at ten. Do either of those work?",
+   "start": 10.17,
+   "end": 17.5,
+   "tool": {
+    "t": "check_availability",
+    "d": "HydraFacial, this week",
+    "r": "Thu 2:30pm, Fri 10:00am open"
+   }
+  },
+  {
+   "who": "c",
+   "text": "Thursday at two thirty is perfect.",
+   "start": 17.9,
+   "end": 19.68
+  },
+  {
+   "who": "a",
+   "text": "Great. And can I get your first and last name?",
+   "start": 20.03,
+   "end": 22.46,
+   "tool": {
+    "t": "hold_slot",
+    "d": "Thu 2:30pm, 60 min",
+    "r": "Held while we finish the call"
+   }
+  },
+  {
+   "who": "c",
+   "text": "It's Maya. Maya Patel.",
+   "start": 22.86,
+   "end": 24.56
+  },
+  {
+   "who": "a",
+   "text": "Thanks, Maya. Is this the best number to text your confirmation to?",
+   "start": 24.91,
+   "end": 28.6
+  },
+  {
+   "who": "c",
+   "text": "Yep, this one's good.",
+   "start": 28.95,
+   "end": 30.06
+  },
+  {
+   "who": "a",
+   "text": "Perfect. So that's a HydraFacial, Thursday at two thirty. It's a hundred and ninety nine, and it takes about an hour. You'll get a text in just a second, and a reminder the day before.",
+   "start": 30.46,
+   "end": 41.11,
+   "tool": {
+    "t": "book_appointment",
+    "d": "HydraFacial, Thu 2:30pm, Maya Patel",
+    "r": "Confirmed in the spa calendar"
+   }
+  },
+  {
+   "who": "c",
+   "text": "Awesome, thank you so much.",
+   "start": 41.51,
+   "end": 43.15,
+   "tool": {
+    "t": "send_sms",
+    "d": "to caller",
+    "r": "You're booked Thu 2:30pm at Willow & Pine. Reply C to cancel."
+   }
+  },
+  {
+   "who": "a",
+   "text": "Of course! See you Thursday, Maya.",
+   "start": 43.45,
+   "end": 45.31,
+   "tool": {
+    "t": "write_summary",
+    "d": "after hang-up",
+    "r": "New client, HydraFacial booked, CRM contact created"
+   }
+  }
+ ]
+}

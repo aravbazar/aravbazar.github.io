@@ -3,167 +3,281 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Arav Bazar</title>
-<meta name="description" content="Arav Bazar builds AI voice agents, chat agents, automations and custom software for agencies and service businesses. Try the live demos.">
-<meta property="og:title" content="Arav Bazar">
-<meta property="og:description" content="AI agents, automations and custom software for agencies. Six live demos you can try.">
-<link rel="stylesheet" href="assets/base.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
-<style>
-/* Layout: one left-aligned column; the demos carry the color, the page stays quiet around them. */
-:root { --link: #0b57d0; --paper: #ffffff; --display: "Bricolage Grotesque", "Schibsted Grotesk", system-ui, sans-serif; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --link: #8ab4f8; --paper: #111315; } }
-:root[data-theme="dark"] { --link: #8ab4f8; --paper: #111315; }
-body { background: var(--paper); font-size: 15.5px; line-height: 1.55; }
-.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
-a { color: var(--link); text-underline-offset: 3px; }
-
-.intro { padding-block: 64px 40px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px 48px; align-items: end; }
-.intro h1 { font-family: var(--display); font-weight: 800; font-size: clamp(44px, 7vw, 84px); line-height: .92; letter-spacing: -.025em; margin: 0 0 22px; }
-.intro p { margin: 0; max-width: 58ch; font-size: 18px; color: var(--ink-2); }
-.intro p strong { color: var(--ink); font-weight: 600; }
-.contact { display: grid; gap: 6px; font-size: 14.5px; justify-items: start; }
-.contact .btn { height: 40px; padding: 0 16px; background: var(--ink); color: var(--paper); border-color: var(--ink); text-decoration: none; }
-
-section { padding-block: 36px; border-top: 1px solid var(--line); }
-h2 { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: -.01em; margin: 0 0 6px; }
-.lede { color: var(--ink-2); margin: 0 0 24px; max-width: 64ch; }
-
-.demos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 32px; }
-.demo { display: grid; gap: 10px; align-content: start; }
-.demo .shot { display: block; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--sunken); aspect-ratio: 16 / 10; max-width: 100%; }
-.demo .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .4s ease; }
-.demo .shot:hover img { transform: scale(1.015); }
-.demo h3 { margin: 4px 0 0; font-size: 18px; }
-.demo h3 a { color: var(--ink); text-decoration: none; }
-.demo h3 a:hover { text-decoration: underline; }
-.demo p { margin: 0; color: var(--ink-2); }
-.demo .stack { font-size: 13.5px; color: var(--ink-3); }
-.demo .try { font-weight: 600; font-size: 14.5px; }
-
-.exp { display: grid; gap: 0; }
-.row { display: grid; grid-template-columns: 200px minmax(0, 1fr) 120px; gap: 6px 24px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-.row:last-child { border-bottom: 0; }
-.row b { display: block; }
-.row .role { color: var(--ink-3); font-size: 14px; }
-.row p { margin: 0; color: var(--ink-2); }
-.row .when { color: var(--ink-3); font-size: 14px; text-align: right; }
-
-.how { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
-.how b { display: block; margin-bottom: 4px; }
-.how p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
-
-footer { border-top: 1px solid var(--line); padding-block: 28px 56px; display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; font-size: 14.5px; color: var(--ink-2); }
-footer .links { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
-.copy { background: none; border: 1px solid var(--line-strong); border-radius: var(--r-sm); height: 26px; padding: 0 8px; cursor: pointer; font-size: 12.5px; }
-
-@media (max-width: 820px) {
-  .intro { grid-template-columns: minmax(0, 1fr); padding-block: 40px 28px; }
-  .demos { grid-template-columns: minmax(0, 1fr); }
-  .row { grid-template-columns: minmax(0, 1fr); }
-  .row .when { text-align: left; grid-row: 1; }
-  .how { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 480px) { .how { grid-template-columns: minmax(0, 1fr); } .intro p { font-size: 16.5px; } }
-</style>
+<title>Arav Bazar: AI receptionists and automations</title>
+<meta name="description" content="AI receptionists, website chat agents and follow-up automations for agencies and the service businesses they sell to. Press play to hear one take a call.">
+<meta property="og:title" content="Closed for the night. Still booking.">
+<meta property="og:description" content="AI receptionists, chat agents and automations for agencies. Press play to hear one take a call.">
+<meta property="og:image" content="https://aravbazar.github.io/assets/cover.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-<main class="wrap">
-  <header class="intro">
+<nav class="top" aria-label="Main"><div class="wrap">
+  <a class="mark" href="#">Arav Bazar <span>AI builds</span></a>
+  <ul><li><a href="#calls">Hear the calls</a></li><li><a href="#math">Missed-call math</a></li><li><a href="#builds">Builds</a></li><li><a href="#background">Background</a></li></ul>
+  <a class="btn" href="https://frontrunners.si/developers/arav-bazar">Message me</a>
+</div></nav>
+
+<header class="hero">
+  <div class="wrap">
     <div>
-      <h1>Arav Bazar</h1>
-      <p>I build <strong>AI voice agents, chat agents and automations</strong> for agencies and the service businesses they sell to, plus the custom software around them: CRMs, client portals and dashboards. Full-stack engineer in Austin, TX. Previously built internal software at Fidelity Investments.</p>
+      <h1>Closed for the night. <em>Still booking.</em></h1>
+      <p class="lede">I build AI receptionists, website chat agents and follow-up automations for agencies and the service businesses they sell to. They pick up when nobody else can.</p>
+      <div class="actions">
+        <button class="btn lamp" type="button" id="heroPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>Hear a 45-second call</button>
+        <button class="btn" type="button" id="talkLive" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.9V21h2v-2.1A7 7 0 0019 12z" fill="currentColor"/></svg>Talk to it yourself</button>
+        <a class="btn" href="#builds">See the builds</a>
+      </div>
+      <p class="fine">Willow &amp; Pine is a demo med spa. The receptionist's voice, the scheduling, the booking and the text confirmation are all the agent.</p>
     </div>
-    <div class="contact">
-      <a class="btn" href="https://frontrunners.si/developers/arav-bazar">Message me on AI Frontrunners</a>
-      <span>aravbazar07@gmail.com <button class="copy" type="button" data-copy="aravbazar07@gmail.com">Copy</button></span>
+    <div class="stage">
+      <div class="photo"><img src="assets/img/salon-night.jpg" alt="A salon window at night with a CLOSED sign hanging inside" width="2000" height="2000"></div>
+      <div class="call" id="heroCall">
+        <div class="call-head">
+          <button class="play" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button>
+          <div class="call-id"><b>Willow &amp; Pine front desk</b><span><i class="live"></i>Incoming call, 9:47 PM</span></div>
+          <span class="call-time" data-time>0:00</span>
+        </div>
+        <div class="wave" data-bar aria-hidden="true"></div>
+        <ol class="lines" data-lines aria-live="polite"></ol>
+        <div class="booked" id="heroBooked" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z" fill="currentColor"/></svg><span id="heroBookedText"></span></div>
+      </div>
     </div>
-  </header>
+  </div>
+</header>
 
-  <section id="demos">
-    <h2>Try the demos</h2>
-    <p class="lede">Each one is a working build on a made-up business, so you can poke at it before we talk. They run in your browser with sample data; the real versions connect to the client's phone line, calendar, CRM and SMS.</p>
-    <div class="demos">
-      <article class="demo">
-        <a class="shot" href="receptionist/"><img src="assets/shots/receptionist.png" alt="Phone console showing a live call transcript, booking details and the actions the receptionist took" loading="lazy"></a>
-        <h3><a href="receptionist/">AI phone receptionist for a med spa</a></h3>
-        <p>Answers the call, quotes from the real price list, checks the calendar, books, texts a confirmation and writes the CRM record. Discount requests, medical questions and double-bookings are blocked in code, not just in the prompt.</p>
-        <span class="stack">Voice AI, LLM tool calling, calendar and CRM APIs, Twilio SMS</span>
-        <a class="try" href="receptionist/">Make a test call</a>
+<section class="block" id="calls">
+  <div class="wrap">
+    <div class="head">
+      <h2>The calls that usually go wrong.</h2>
+      <p>Anyone can demo a happy-path booking. These are the calls that get AI receptionists fired: a caller fishing for a discount, a medical question, a slot that's already taken. The rules that handle them are checked in code, so no caller can talk the agent out of them.</p>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-call="discount" type="button">Pushes for a discount</button>
+      <button class="tab" role="tab" aria-selected="false" data-call="medical" type="button">Asks a medical question</button>
+      <button class="tab" role="tab" aria-selected="false" data-call="booking" type="button">Books a facial</button>
+    </div>
+    <div class="console" id="console">
+      <div class="left">
+        <div class="call-head">
+          <button class="play" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button>
+          <div class="call-id"><b id="consoleTitle">Caller wants a discount</b><span><i class="live"></i>Recorded demo call</span></div>
+          <span class="call-time" data-time>0:00</span>
+        </div>
+        <div class="wave" data-bar aria-hidden="true"></div>
+        <ol class="lines" data-lines aria-live="polite"></ol>
+      </div>
+      <div class="right">
+        <h3>What the agent did</h3>
+        <ul class="log" data-log></ul>
+        <p class="why" id="why"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="math">
+  <div class="wrap">
+    <div class="head">
+      <h2>What the unanswered calls cost.</h2>
+      <p>Put in a client's real numbers. This is the math I'd walk an owner through on a sales call, and you can use it on yours.</p>
+    </div>
+    <div class="calc">
+      <form class="card" id="calc" onsubmit="return false">
+        <div class="field"><label for="m-calls">Calls missed per week</label><output id="o-calls"></output><input type="range" id="m-calls" min="1" max="60" value="14"><small>After hours, during jobs, on lunch, on hold.</small></div>
+        <div class="field"><label for="m-rate">Share that would have booked</label><output id="o-rate"></output><input type="range" id="m-rate" min="5" max="80" value="30"></div>
+        <div class="field"><label for="m-value">Average first job value</label><output id="o-value"></output><input type="range" id="m-value" min="50" max="2000" step="10" value="220"></div>
+        <div class="field" style="margin-bottom:0"><label for="m-cost">Monthly cost of the agent</label><output id="o-cost"></output><input type="range" id="m-cost" min="100" max="1500" step="25" value="400"><small>Build amortized plus phone minutes and AI usage.</small></div>
+      </form>
+      <div class="card result" aria-live="polite">
+        <div class="big" id="r-month">$0</div>
+        <p>in bookings walking to a competitor every month.</p>
+        <dl>
+          <dt>Missed bookings a month</dt><dd id="r-jobs"></dd>
+          <dt>Lost per year</dt><dd id="r-year"></dd>
+          <dt>Agent cost per year</dt><dd id="r-agent"></dd>
+          <dt>Pays for itself after</dt><dd id="r-pay"></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="builds">
+  <div class="wrap">
+    <div class="head">
+      <h2>More builds you can click through.</h2>
+      <p>Each one runs on a made-up business with sample data, so a prospect can try it before anyone signs anything. The real versions plug into the client's phone line, calendar, CRM and SMS.</p>
+    </div>
+    <div class="builds">
+      <article class="build">
+        <a class="frame" href="roofing/"><div class="chrome"><i></i><i></i><i></i><span>ridgeline-roofing (demo)</span></div><img src="assets/shots/roofing-crop.jpg" alt="Roofing company website with the chat assistant answering a hail damage question and citing its source" loading="lazy"></a>
+        <div><span class="kind">Website chat agent</span><h3>Answers from the company's own playbook. Says "I don't know" when it should.</h3>
+          <p>A roofer's site assistant that cites the source under every answer, refuses to promise insurance outcomes and turns night-time visitors into booked inspections.</p>
+          <p class="result-line">Ask it about solar panels. It won't make something up.</p>
+          <a class="try" href="roofing/">Try the chat agent</a></div>
       </article>
-      <article class="demo">
-        <a class="shot" href="roofing/"><img src="assets/shots/roofing.png" alt="Roofing company website with a chat assistant answering a hail damage question with sources" loading="lazy"></a>
-        <h3><a href="roofing/">Website chat agent for a roofer</a></h3>
-        <p>Answers from the company's own guides with sources shown, says "I don't know" when retrieval confidence is low instead of guessing, and turns visitors into booked inspections. Open "See how it decided" to watch retrieval and guardrails.</p>
-        <span class="stack">RAG, BM25 and vector search, guardrails, lead capture, CRM webhook</span>
-        <a class="try" href="roofing/">Ask it something</a>
+      <article class="build">
+        <a class="frame" href="speed-to-lead/"><div class="chrome"><i></i><i></i><i></i><span>cooper-air lead pipeline (demo)</span></div><img src="assets/shots/speed-to-lead-crop.jpg" alt="Lead pipeline run history with a hot lead's step-by-step results and the text it received" loading="lazy"></a>
+        <div><span class="kind">Speed-to-lead automation</span><h3>Every lead texted in under a minute. Spam never reaches the CRM.</h3>
+          <p>Leads from Google, Facebook, Angi and the website get cleaned, deduplicated, checked against the service area, scored and texted. Hot ones page the on-call tech.</p>
+          <p class="result-line">Send it a fake lead and watch all nine steps run.</p>
+          <a class="try" href="speed-to-lead/">Send a test lead</a></div>
       </article>
-      <article class="demo">
-        <a class="shot" href="speed-to-lead/"><img src="assets/shots/speed-to-lead.png" alt="Automation run history with a selected lead's step-by-step results and the text it was sent" loading="lazy"></a>
-        <h3><a href="speed-to-lead/">Speed-to-lead pipeline for an HVAC company</a></h3>
-        <p>Every lead from Google, Facebook, Angi or the website gets cleaned, deduplicated, checked against the service area, scored and texted within a minute. Hot leads page the on-call tech. Spam never reaches the CRM.</p>
-        <span class="stack">Python or n8n, webhooks, lead scoring, Twilio, CRM API, Slack</span>
-        <a class="try" href="speed-to-lead/">Send a test lead</a>
+      <article class="build">
+        <a class="frame" href="text-back/"><div class="chrome"><i></i><i></i><i></i><span>pecan-street text-back (demo)</span></div><img src="assets/shots/text-back-crop.jpg" alt="A customer's phone showing a missed-call text thread that ends in a booked appointment" loading="lazy"></a>
+        <div><span class="kind">Missed-call text-back</span><h3>The plumber can't pick up. The caller gets a text in 60 seconds anyway.</h3>
+          <p>Missed callers can book by replying. Emergencies page the on-call plumber, quiet hours hold the rest until 8am, and every finished job gets a review request.</p>
+          <p class="result-line">Calls that went to a competitor become jobs booked by text.</p>
+          <a class="try" href="text-back/">Miss a call</a></div>
       </article>
-      <article class="demo">
-        <a class="shot" href="crm/"><img src="assets/shots/crm.png" alt="Pipeline board of HVAC deals with a customer panel showing history and a drafted follow-up text" loading="lazy"></a>
-        <h3><a href="crm/">Custom CRM for a home-service company</a></h3>
-        <p>A pipeline built around how the business actually sells. Moving a deal triggers the right automation: visit reminders, quote follow-ups, review requests. Every customer has one history of calls, texts and notes.</p>
-        <span class="stack">React, TypeScript, PostgreSQL, automations, SMS</span>
-        <a class="try" href="crm/">Drag a deal</a>
+      <article class="build">
+        <a class="frame" href="crm/"><div class="chrome"><i></i><i></i><i></i><span>cooper-air crm (demo)</span></div><img src="assets/shots/crm-crop.jpg" alt="CRM pipeline board with a customer's history and a drafted follow-up text" loading="lazy"></a>
+        <div><span class="kind">Custom CRM</span><h3>Move a deal, and the right follow-up schedules itself.</h3>
+          <p>A pipeline built around how a home-service company actually sells: visit reminders, quote follow-ups, review requests and win-back campaigns fire from the stage a deal is in.</p>
+          <p class="result-line">Overdue follow-ups turn red before a deal goes cold.</p>
+          <a class="try" href="crm/">Drag a deal</a></div>
       </article>
-      <article class="demo">
-        <a class="shot" href="text-back/"><img src="assets/shots/text-back.png" alt="Customer's phone with a missed-call text thread next to the owner's rules and activity log" loading="lazy"></a>
-        <h3><a href="text-back/">Missed-call text-back and review requests</a></h3>
-        <p>When a plumber can't pick up, the caller gets a text in under a minute and can book by replying. Emergencies page the on-call plumber, quiet hours hold non-urgent texts, and every finished job gets a review request.</p>
-        <span class="stack">Twilio, keyword routing, scheduling, Google reviews</span>
-        <a class="try" href="text-back/">Miss a call</a>
-      </article>
-      <article class="demo">
-        <a class="shot" href="agent-ops/"><img src="assets/shots/agent-ops.png" alt="Operations table of AI agents across six clients with status, volume, resolution rate and cost" loading="lazy"></a>
-        <h3><a href="agent-ops/">Agent monitoring for an agency</a></h3>
-        <p>One view of every agent an agency runs across its clients: volume, how much the agent resolved alone, errors, cost, and the questions it couldn't answer. One click writes a plain-English report to forward to the client.</p>
-        <span class="stack">Logging, OpenTelemetry-style metrics, React dashboards</span>
-        <a class="try" href="agent-ops/">Open the dashboard</a>
+      <article class="build">
+        <a class="frame" href="agent-ops/"><div class="chrome"><i></i><i></i><i></i><span>agent operations (demo)</span></div><img src="assets/shots/agent-ops-crop.jpg" alt="Dashboard of AI agents across six clients with status, volume, resolution rate and cost" loading="lazy"></a>
+        <div><span class="kind">Agent monitoring for agencies</span><h3>Know an agent broke before your client does.</h3>
+          <p>Every agent across every client in one view: volume, how much it handled alone, errors, cost and the questions it couldn't answer. One click writes the weekly client report.</p>
+          <p class="result-line">Built on the same approach as the monitoring platform I built at Fidelity.</p>
+          <a class="try" href="agent-ops/">Open the dashboard</a></div>
       </article>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section>
-    <h2>Background</h2>
-    <p class="lede">Real work, not demos.</p>
-    <div class="exp">
-      <div class="row"><div><b>Fidelity Investments</b><span class="role">Software engineering intern, Enterprise Data &amp; AI</span></div><p>Built an internal observability platform (OpenTelemetry, Python/FastAPI, React/TypeScript) as a self-hosted alternative to Datadog, adopted by the database platform team. Wrote a custom Prometheus exporter for PostgreSQL metrics and co-presented a monitoring recommendation across five database engines.</p><span class="when">2026</span></div>
-      <div class="row"><div><b>Cove Events</b><span class="role">Software engineer</span></div><p>Ship Swift/UIKit features for a campus events iOS app with 10,000+ users across five Texas universities.</p><span class="when">Current</span></div>
-      <div class="row"><div><b>Texas Luminescence</b><span class="role">Full-stack developer</span></div><p>Owned the frontend of <a href="https://github.com/aravbazar/CivicMap">CivicMap</a> (React/TypeScript), a map of local political events, from component design through production.</p><span class="when">Since 2025</span></div>
-      <div class="row"><div><b>AI Study Assistant</b><span class="role">Personal project</span></div><p>Turns PDFs, notes and URLs into chat, flashcards and quizzes. RAG pipeline with semantic chunking and pgvector search. <a href="https://github.com/aravbazar/studyai">Source on GitHub</a>.</p><span class="when">2026</span></div>
+<section class="block" id="background">
+  <div class="wrap">
+    <div class="head">
+      <h2>Where I learned to build things that stay up.</h2>
+      <p>Real work, not demos. Austin, TX. AWS Certified Cloud Practitioner.</p>
+    </div>
+    <div class="rows">
+      <div class="row"><div><b>Fidelity Investments</b><span class="role">Software engineering intern, Enterprise Data &amp; AI</span></div><p>Built an internal observability platform (OpenTelemetry, Python/FastAPI, React/TypeScript) as a self-hosted alternative to Datadog, adopted by the database platform team. Wrote a custom Prometheus exporter for PostgreSQL and co-presented a monitoring recommendation across five database engines.</p><span class="when">2026</span></div>
+      <div class="row"><div><b>Cove Events</b><span class="role">Software engineer</span></div><p>Ships Swift/UIKit features for a campus events iOS app with 10,000+ users across five Texas universities.</p><span class="when">Now</span></div>
+      <div class="row"><div><b>AI Study Assistant</b><span class="role">Personal project</span></div><p>Turns PDFs, notes and URLs into chat, flashcards and quizzes with a RAG pipeline on pgvector. The same retrieval pattern runs the roofing chat agent. <a href="https://github.com/aravbazar/studyai">Source on GitHub</a>.</p><span class="when">2026</span></div>
       <div class="row"><div><b>Autonomous trading agent</b><span class="role">Personal project</span></div><p>Python agent that matches live sports data to prediction markets and trades every 30 minutes on its own, with position caps, a daily-loss halt and calibration reports.</p><span class="when">2026</span></div>
-      <div class="row"><div><b>Epic Estates</b><span class="role">Software engineering intern</span></div><p>Full-stack real estate management app on Node.js/Express and MongoDB. Indexing and caching improved database efficiency 40% and cut page loads by 1.5 seconds.</p><span class="when">2025</span></div>
+      <div class="row"><div><b>Epic Estates</b><span class="role">Software engineering intern</span></div><p>Full-stack real estate management app on Node.js and MongoDB. Indexing and caching improved database efficiency 40% and cut page loads by 1.5 seconds.</p><span class="when">2025</span></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section>
-    <h2>How I work</h2>
-    <p class="lede">Most agency projects follow the same path.</p>
-    <div class="how">
-      <div><b>Free scope call</b><p>You bring the client's problem. I come back with a written scope, a fixed price and a delivery date.</p></div>
-      <div><b>White-label by default</b><p>Your branding, your client relationship. I can join a sales call as part of your team.</p></div>
-      <div><b>You own everything</b><p>Code, repos and platform accounts are set up in your or your client's name.</p></div>
-      <div><b>Support after launch</b><p>30 days of fixes and tuning on every build, then an optional monthly care plan.</p></div>
+<section class="block">
+  <div class="wrap">
+    <div class="head"><h2>How it works with agencies.</h2><p>You sell it, I build it, your client never sees my name.</p></div>
+    <div class="work">
+      <div><b>Free scope call</b><p>Bring the client's problem. You get a written scope with one fixed price and a delivery date.</p></div>
+      <div><b>Your brand</b><p>Built white-label under your agency. I'll join a sales call as your engineer if it helps close.</p></div>
+      <div><b>You own it</b><p>Code, repos and platform accounts live in your or your client's name from day one.</p></div>
+      <div><b>It stays up</b><p>Every build ships with logging and failure alerts, plus 30 days of fixes and tuning.</p></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <footer>
-    <span>Austin, TX. AWS Certified Cloud Practitioner. Replies within 24 hours.</span>
-    <span class="links"><a href="https://github.com/aravbazar">GitHub</a><a href="https://linkedin.com/in/b-arav">LinkedIn</a><a href="https://frontrunners.si/developers/arav-bazar">AI Frontrunners</a></span>
-  </footer>
-</main>
+<section class="closing">
+  <img src="assets/img/shop-night.jpg" alt="" loading="lazy">
+  <div class="wrap">
+    <h2>Got a client who keeps missing calls?</h2>
+    <p>Send me the brief. I'll reply within 24 hours with how I'd build it and what it would cost.</p>
+    <div class="actions">
+      <a class="btn lamp" href="https://frontrunners.si/developers/arav-bazar">Message me on AI Frontrunners</a>
+      <button class="copy" type="button" data-copy="aravbazar07@gmail.com">aravbazar07@gmail.com</button>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <span>Arav Bazar, Austin TX. Demo businesses are fictional. Photos from Unsplash.</span>
+  <nav><a href="https://github.com/aravbazar">GitHub</a><a href="https://linkedin.com/in/b-arav">LinkedIn</a><a href="https://frontrunners.si/developers/arav-bazar">AI Frontrunners</a></nav>
+</div></footer>
+
+<script src="assets/call-player.js"></script>
 <script>
-document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
-  try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copied"; }
-  catch (e) { const r = document.createRange(); r.selectNodeContents(b.previousSibling || b); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected"; }
-  setTimeout(() => b.textContent = "Copy", 1600);
-}));
+// Fill this in once the ElevenLabs agent exists; the "Talk to it yourself" button stays hidden until then.
+const ELEVEN_AGENT_ID = "";
+
+(async () => {
+  const $ = id => document.getElementById(id);
+  // Hero call
+  const hero = await CallPlayer($("heroCall"), {
+    src: "assets/calls/booking", names: { a: "Ava, receptionist", c: "Caller" }, seed: 11,
+    onEvent(t) { if (t.t === "book_appointment") { $("heroBookedText").textContent = "Booked: HydraFacial, Thursday 2:30 PM. Confirmation texted."; $("heroBooked").hidden = false; $("heroBooked").classList.add("pop"); } }
+  });
+  hero.audio.addEventListener("seeked", () => { if (hero.audio.currentTime < 30) $("heroBooked").hidden = true; });
+  $("heroPlay").onclick = () => {
+    $("heroCall").querySelector("[data-play]").click();
+    if (window.innerWidth < 960) $("heroCall").scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  // Hard calls console
+  const WHY = {
+    discount: "Discounts and price changes aren't the model's call. The booking tool rejects any price that isn't on the spa's list, so even a perfectly persuasive caller gets the same polite answer.",
+    medical: "Anything that sounds medical routes to a person. The agent creates a callback task for the nurse injector instead of guessing.",
+    booking: "Slots are re-checked right before the booking is written, so two callers can never land in the same chair."
+  };
+  const TITLES = { discount: "Caller wants a discount", medical: "Caller asks if Botox is safe while breastfeeding", booking: "Caller books a HydraFacial" };
+  let current = null;
+  async function load(name) {
+    if (current) current.reset();
+    CallPlayer.stopOthers(null);
+    const el = $("console");
+    const fresh = el.cloneNode(true); el.replaceWith(fresh);
+    fresh.querySelector("[data-bar]").innerHTML = "";
+    $("consoleTitle").textContent = TITLES[name];
+    $("why").textContent = WHY[name];
+    current = await CallPlayer(fresh, { src: "assets/calls/" + name, names: { a: "Ava, receptionist", c: "Caller" }, seed: name.length * 7 });
+  }
+  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t));
+    load(t.dataset.call);
+  }));
+  load("discount");
+
+  // Missed-call math
+  const money = n => "$" + Math.round(n).toLocaleString();
+  function calc() {
+    const c = +$("m-calls").value, r = +$("m-rate").value / 100, v = +$("m-value").value, cost = +$("m-cost").value;
+    $("o-calls").textContent = c; $("o-rate").textContent = Math.round(r * 100) + "%"; $("o-value").textContent = money(v); $("o-cost").textContent = money(cost);
+    const jobs = c * r * 52 / 12, month = jobs * v;
+    $("r-month").textContent = money(month);
+    $("r-jobs").textContent = jobs.toFixed(1);
+    $("r-year").textContent = money(month * 12);
+    $("r-agent").textContent = money(cost * 12);
+    const days = month > 0 ? cost / (month / 30) : Infinity;
+    $("r-pay").textContent = days < 1 ? "less than a day" : days > 60 ? "more than two months" : Math.ceil(days) + " days";
+  }
+  ["m-calls", "m-rate", "m-value", "m-cost"].forEach(id => $(id).addEventListener("input", calc));
+  calc();
+
+  // Copy email
+  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
+    const t = b.textContent;
+    try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copied"; } catch (e) { b.textContent = b.dataset.copy; }
+    setTimeout(() => b.textContent = t, 1500);
+  }));
+
+  // Live voice agent (ElevenLabs widget), loaded only when an agent id is set.
+  if (ELEVEN_AGENT_ID) {
+    const w = document.createElement("elevenlabs-convai");
+    w.setAttribute("agent-id", ELEVEN_AGENT_ID);
+    document.body.appendChild(w);
+    const s = document.createElement("script");
+    s.src = "https://unpkg.com/@elevenlabs/convai-widget-embed"; s.async = true;
+    document.body.appendChild(s);
+    $("talkLive").hidden = false;
+    $("talkLive").onclick = () => {
+      CallPlayer.stopOthers(null);
+      const el = document.querySelector("elevenlabs-convai");
+      const root = el && el.shadowRoot;
+      const start = root && [...root.querySelectorAll("button")].find(b => /start|call|talk/i.test(b.textContent + b.getAttribute("aria-label")));
+      if (start) start.click(); else el && el.scrollIntoView({ behavior: "smooth", block: "end" });
+    };
+  }
+})();
 </script>
 </body>
 </html>
