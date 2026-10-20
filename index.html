@@ -205,9 +205,13 @@ const ELEVEN_AGENT_ID = "";
   // Hero call
   const hero = await CallPlayer($("heroCall"), {
     src: "assets/calls/booking", names: { a: "Ava, receptionist", c: "Caller" }, seed: 11,
-    onEvent(t) { if (t.t === "book_appointment") { $("heroBookedText").textContent = "Booked: HydraFacial, Thursday 2:30 PM. Confirmation texted."; $("heroBooked").hidden = false; $("heroBooked").classList.add("pop"); } }
+    onTime(t, data) {
+      const b = data.lines.find(l => l.tool && l.tool.t === "book_appointment");
+      const show = b && t >= b.start + 2;
+      if (show && $("heroBooked").hidden) { $("heroBookedText").textContent = "Booked: HydraFacial, Thursday 2:30 PM. Confirmation texted."; $("heroBooked").hidden = false; $("heroBooked").classList.add("pop"); }
+      if (!show) $("heroBooked").hidden = true;
+    }
   });
-  hero.audio.addEventListener("seeked", () => { if (hero.audio.currentTime < 30) $("heroBooked").hidden = true; });
   $("heroPlay").onclick = () => {
     $("heroCall").querySelector("[data-play]").click();
     if (window.innerWidth < 960) $("heroCall").scrollIntoView({ behavior: "smooth", block: "center" });
