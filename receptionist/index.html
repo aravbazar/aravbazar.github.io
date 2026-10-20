@@ -3,112 +3,135 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Willow &amp; Pine Front Desk</title>
-<meta name="description" content="Demo: an AI phone receptionist for a med spa. Hear it book, refuse a discount and route a medical question, or talk to it yourself.">
+<title>AI Receptionist Demo | Bazar</title>
+<meta name="description" content="Demo: an AI phone receptionist for a med spa. Hear it book, refuse a discount and route a medical question.">
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/v3.css">
 <style>
-.rhero { padding-top: calc(env(safe-area-inset-top, 0px) + 110px); padding-bottom: 48px; }
-.rhero h1 { font-weight: 800; font-size: clamp(44px, 6.4vw, 84px); line-height: .92; letter-spacing: -.035em; max-width: 12em; }
-.rhero h1 em { font-style: normal; color: var(--lamp); }
-.rhero p { margin-top: 20px; font-size: 18px; color: var(--ink-2); max-width: 36em; }
-.rhero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
-.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
-.facts b { display: block; font-family: var(--display); font-size: 18px; font-weight: 650; margin-bottom: 4px; }
-.facts span { color: var(--ink-2); font-size: 14.5px; }
-.note { margin-top: 14px; font-size: 13.5px; color: var(--ink-3); }
-@media (max-width: 800px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 28px; text-align: left; }
+.facts div { background: #fff; border-radius: 22px; padding: 24px; }
+.facts b { display: block; font-size: 18px; letter-spacing: -.02em; margin-bottom: 6px; }
+.facts span { color: var(--ink-2); font-size: 15px; }
+@media (max-width: 900px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .facts { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
-<nav class="top" aria-label="Main"><div class="wrap">
-  <a class="mark" href="../">Arav Bazar <span>AI builds</span></a>
-  <ul><li><a href="../#calls">Hard calls</a></li><li><a href="../#math">Missed-call math</a></li><li><a href="../#builds">Other builds</a></li></ul>
-  <a class="btn" href="https://frontrunners.si/developers/arav-bazar">Message me</a>
+<nav class="nav" aria-label="Main"><div class="wrap">
+  <a class="logo" href="../"><img src="../assets/logo.svg" alt="">Bazar</a>
+  <ul><li><a href="../#how">How it works</a></li><li><a href="../#work">All work</a></li><li><a href="../#faq">FAQ</a></li></ul>
+  <a class="btn primary" href="https://frontrunners.si/developers/arav-bazar">Start a project</a>
 </div></nav>
 
-<header class="rhero"><div class="wrap">
-  <h1>Willow &amp; Pine's front desk <em>never goes to voicemail.</em></h1>
-  <p>An AI receptionist for a demo med spa. It answers, quotes from the real price list, checks the calendar, books, texts the confirmation and logs everything to the CRM. Press play on any call below, or talk to it yourself.</p>
-  <div class="actions">
-    <button class="btn lamp" type="button" id="talkLive" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.9V21h2v-2.1A7 7 0 0019 12z" fill="currentColor"/></svg>Talk to Ava now</button>
-    <button class="btn" type="button" id="playFirst"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>Play a booking call</button>
-  </div>
-  <p class="note" id="liveNote" hidden>Talking to Ava uses your microphone. Try booking a facial, asking for a discount, or asking for a slot that's taken.</p>
-</div></header>
-
-<section class="block" id="calls" style="padding-top:56px">
+<header class="hero">
   <div class="wrap">
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" aria-selected="true" data-call="booking" type="button">Books a facial</button>
-      <button class="tab" role="tab" aria-selected="false" data-call="discount" type="button">Pushes for a discount</button>
-      <button class="tab" role="tab" aria-selected="false" data-call="medical" type="button">Asks a medical question</button>
+    <span class="eyebrow" data-h><i></i>Demo: Willow &amp; Pine, a sample med spa</span>
+    <h1><span data-h>A front desk that</span><span class="blue" data-h>never goes to voicemail.</span></h1>
+    <p class="sub" data-h>Ava answers, quotes from the real price list, checks the calendar, books, texts the confirmation and logs the call. Press play on the phone to hear a real-sounding call.</p>
+    <div class="cta" data-h>
+      <button class="btn primary" type="button" id="heroPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>Play the call</button>
+      <button class="btn ghost" type="button" id="talkLive" hidden>Talk to Ava live</button>
+      <a class="btn ghost" href="#calls">Hear the hard calls</a>
     </div>
-    <div class="console" id="console">
-      <div class="left">
-        <div class="call-head">
-          <button class="play" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button>
-          <div class="call-id"><b id="consoleTitle"></b><span><i class="live"></i>Recorded demo call</span></div>
-          <span class="call-time" data-time>0:00</span>
+  </div>
+  <div class="stage">
+    <div class="glow"></div>
+    <div class="phone" id="heroCall">
+      <div class="screen">
+        <div class="who">
+          <div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg></div>
+          <small>Willow &amp; Pine front desk</small>
+          <b>Ava, AI receptionist</b>
+          <span data-time>0:00</span>
         </div>
         <div class="wave" data-bar aria-hidden="true"></div>
         <ol class="lines" data-lines aria-live="polite"></ol>
-      </div>
-      <div class="right">
-        <h3>What the agent did</h3>
-        <ul class="log" data-log></ul>
-        <p class="why" id="why"></p>
+        <div class="controls"><button class="round go" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button></div>
       </div>
     </div>
+    <div class="float f1" id="fl1"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></i><b>Checking availability</b><span>Thu 2:30 PM, Fri 10:00 AM open</span></div>
+    <div class="float f2" id="fl2"><i class="green"><svg viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z" fill="#fff"/></svg></i><b>Booked: HydraFacial</b><span>Thursday 2:30 PM, Ryan Patel</span></div>
+    <div class="float f3" id="fl3"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 6h16v10H8l-4 4z"/></svg></i><b>Confirmation texted</b><span>Reminder set for Wednesday</span></div>
+  </div>
+</header>
+
+<section class="mist center" id="calls">
+  <div class="wrap">
+    <h2 class="h2" data-r>The hard calls.</h2>
+    <p class="lede" data-r>The rules behind these answers are enforced in code, so no caller can talk Ava out of them.</p>
+    <div class="tabs" role="tablist" data-r>
+      <button class="tab" role="tab" aria-selected="true" data-call="discount" type="button">Pushes for a discount</button>
+      <button class="tab" role="tab" aria-selected="false" data-call="medical" type="button">Asks a medical question</button>
+      <button class="tab" role="tab" aria-selected="false" data-call="booking" type="button">Books a facial</button>
+    </div>
+    <div class="console" id="console" data-r>
+      <div class="l">
+        <div class="ch"><button class="round" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button><div><b id="consoleTitle"></b><span>Recorded demo call</span></div><time data-time>0:00</time></div>
+        <div class="wave" data-bar aria-hidden="true"></div>
+        <ol class="lines" data-lines aria-live="polite"></ol>
+      </div>
+      <div class="r"><h4>What the agent did</h4><ul class="log" data-log></ul><p class="why" id="why"></p></div>
+    </div>
     <div class="facts">
-      <div><b>Prices from the list only</b><span>The booking tool rejects any price that isn't on the spa's menu.</span></div>
-      <div><b>No double-booking</b><span>Every slot is re-checked the moment before it's written.</span></div>
-      <div><b>No medical advice</b><span>Health questions become a callback task for the nurse injector.</span></div>
-      <div><b>Hands off cleanly</b><span>Ask for a person and the call transfers with a summary.</span></div>
+      <div data-r><b>Prices from the list only</b><span>The booking tool rejects any price that isn't on the spa's menu.</span></div>
+      <div data-r><b>No double-booking</b><span>Every slot is re-checked the moment before it's written.</span></div>
+      <div data-r><b>No medical advice</b><span>Health questions become a callback task for the nurse injector.</span></div>
+      <div data-r><b>Clean handoffs</b><span>Ask for a person and the call transfers with a summary.</span></div>
     </div>
   </div>
 </section>
 
-<footer><div class="wrap">
-  <span>Willow &amp; Pine is a fictional med spa. Built by Arav Bazar.</span>
-  <nav><a href="../">All builds</a><a href="https://frontrunners.si/developers/arav-bazar">AI Frontrunners</a></nav>
-</div></footer>
+<section class="final">
+  <div class="wrap">
+    <h2 class="h2" data-r>Want this for a client?</h2>
+    <p class="lede" data-r>Built white-label under your agency, in one to two weeks, at a fixed price.</p>
+    <div class="cta" data-r><a class="btn primary" href="https://frontrunners.si/developers/arav-bazar">Message me on AI Frontrunners</a><a class="btn ghost" href="../#work" style="color:#8fb0ff;border-color:#3a4a7a">See all work</a></div>
+  </div>
+</section>
+<footer><div class="wrap"><span>© 2026 Bazar. Willow &amp; Pine is a fictional business.</span><nav><a href="../">Home</a><a href="https://frontrunners.si/developers/arav-bazar">AI Frontrunners</a></nav></div></footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="../assets/call-player.js"></script>
 <script>
 const ELEVEN_AGENT_ID = "";
 (async () => {
   const $ = id => document.getElementById(id);
-  const WHY = {
-    booking: "Slots are re-checked right before the booking is written, so two callers can never land in the same chair.",
-    discount: "Discounts aren't the model's call. The booking tool only accepts prices from the spa's list, so a persuasive caller still gets the same answer.",
-    medical: "Anything that sounds medical routes to a person. The agent creates a callback task instead of guessing."
-  };
-  const TITLES = { booking: "Caller books a HydraFacial", discount: "Caller wants a discount", medical: "Caller asks if Botox is safe while breastfeeding" };
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (window.gsap && !reduce) {
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from("[data-h]", { y: 36, opacity: 0, duration: 1, ease: "power3.out", stagger: .09 });
+    gsap.fromTo(".stage .phone", { scale: .88, y: 60 }, { scale: 1, y: 0, ease: "none", scrollTrigger: { trigger: ".stage", start: "top 95%", end: "top 30%", scrub: .6 } });
+    gsap.utils.toArray("[data-r]").forEach(el => gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } }));
+  }
+  // Floating cards appear as the call reaches each action.
+  const fl = ["fl1", "fl2", "fl3"].map($);
+  fl.forEach(f => { f.style.transition = "opacity .5s, transform .5s"; f.style.opacity = 0; f.style.transform = "translateY(14px)"; });
+  const at = { check_availability: 0, book_appointment: 1, send_sms: 2 };
+  await CallPlayer($("heroCall"), { src: "../assets/calls/booking", names: { a: "Ava (AI)", c: "Caller" }, seed: 11,
+    onTime(t, data) { data.lines.forEach(l => { if (l.tool && l.tool.t in at) { const f = fl[at[l.tool.t]]; const on = t >= l.start; f.style.opacity = on ? 1 : 0; f.style.transform = on ? "none" : "translateY(14px)"; } }); } });
+  $("heroPlay").onclick = () => { $("heroCall").querySelector("[data-play]").click(); $("heroCall").scrollIntoView({ behavior: "smooth", block: "center" }); };
+
+  const WHY = { discount: "Discounts aren't the model's decision. The booking tool only accepts prices from the spa's list.", medical: "Anything that sounds medical goes to a person. Ava creates a callback task instead of guessing.", booking: "The slot is re-checked right before the booking is written, so two callers can never land in the same chair." };
+  const TITLES = { discount: "Caller wants a discount", medical: "Caller asks a medical question", booking: "Caller books a HydraFacial" };
   let current = null;
-  async function load(name, autoplay) {
-    if (current) current.reset();
-    const el = $("console"); const fresh = el.cloneNode(true); el.replaceWith(fresh);
+  async function load(name) {
+    if (current) current.reset(); CallPlayer.stopOthers(null);
+    const el = $("console"); const fresh = el.cloneNode(true); fresh.style.cssText = ""; el.replaceWith(fresh);
     fresh.querySelector("[data-bar]").innerHTML = "";
     $("consoleTitle").textContent = TITLES[name]; $("why").textContent = WHY[name];
     current = await CallPlayer(fresh, { src: "../assets/calls/" + name, names: { a: "Ava, receptionist", c: "Caller" }, seed: name.length * 7 });
-    if (autoplay) current.audio.play();
   }
-  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t)); load(t.dataset.call);
-  }));
-  $("playFirst").onclick = () => { document.querySelector('.tab[data-call="booking"]').click(); setTimeout(() => current && current.audio.play(), 150); $("calls").scrollIntoView({ behavior: "smooth" }); };
-  await load("booking");
+  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t)); load(t.dataset.call); }));
+  load("discount");
+
   if (ELEVEN_AGENT_ID) {
     const w = document.createElement("elevenlabs-convai"); w.setAttribute("agent-id", ELEVEN_AGENT_ID); document.body.appendChild(w);
     const s = document.createElement("script"); s.src = "https://unpkg.com/@elevenlabs/convai-widget-embed"; s.async = true; document.body.appendChild(s);
-    $("talkLive").hidden = false; $("liveNote").hidden = false;
-    $("talkLive").onclick = () => {
-      CallPlayer.stopOthers(null);
-      const root = w.shadowRoot; const b = root && [...root.querySelectorAll("button")].find(x => /start|call|talk/i.test(x.textContent + (x.getAttribute("aria-label") || "")));
-      if (b) b.click(); else w.scrollIntoView({ behavior: "smooth", block: "end" });
-    };
+    $("talkLive").hidden = false;
+    $("talkLive").onclick = () => { CallPlayer.stopOthers(null); const r = w.shadowRoot; const b = r && [...r.querySelectorAll("button")].find(x => /start|call|talk/i.test(x.textContent + (x.getAttribute("aria-label") || ""))); if (b) b.click(); };
   }
 })();
 </script>

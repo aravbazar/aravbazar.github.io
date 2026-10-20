@@ -3,73 +3,120 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Arav Bazar: AI receptionists and automations</title>
-<meta name="description" content="AI receptionists, website chat agents and follow-up automations for agencies and the service businesses they sell to. Press play to hear one take a call.">
-<meta property="og:title" content="Closed for the night. Still booking.">
-<meta property="og:description" content="AI receptionists, chat agents and automations for agencies. Press play to hear one take a call.">
+<title>Bazar: AI receptionists, agents and automations for agencies</title>
+<meta name="description" content="Bazar builds AI receptionists, chat agents and lead automations for agencies and the service businesses they sell to. White-label, fixed price. Listen to one take a call.">
+<meta property="og:title" content="Bazar: Every call answered. Every lead booked.">
+<meta property="og:description" content="AI receptionists, chat agents and automations, built white-label for agencies.">
 <meta property="og:image" content="https://aravbazar.github.io/assets/cover.png">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/v3.css">
 </head>
 <body>
-<nav class="top" aria-label="Main"><div class="wrap">
-  <a class="mark" href="#">Arav Bazar <span>AI builds</span></a>
-  <ul><li><a href="#calls">Hear the calls</a></li><li><a href="#math">Missed-call math</a></li><li><a href="#builds">Builds</a></li><li><a href="#background">Background</a></li></ul>
-  <a class="btn" href="https://frontrunners.si/developers/arav-bazar">Message me</a>
+<nav class="nav" aria-label="Main"><div class="wrap">
+  <a class="logo" href="#top"><img src="assets/logo.svg" alt="">Bazar</a>
+  <ul><li><a href="#how">How it works</a></li><li><a href="#calls">Hear it</a></li><li><a href="#work">Work</a></li><li><a href="#cost">Missed-call math</a></li><li><a href="#faq">FAQ</a></li></ul>
+  <a class="btn primary" href="https://frontrunners.si/developers/arav-bazar">Start a project</a>
 </div></nav>
 
-<header class="hero">
+<header class="hero" id="top">
   <div class="wrap">
-    <div>
-      <h1>Closed for the night. <em>Still booking.</em></h1>
-      <p class="lede">I build AI receptionists, website chat agents and follow-up automations for agencies and the service businesses they sell to. They pick up when nobody else can.</p>
-      <div class="actions">
-        <button class="btn lamp" type="button" id="heroPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>Hear a 45-second call</button>
-        <button class="btn" type="button" id="talkLive" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.9V21h2v-2.1A7 7 0 0019 12z" fill="currentColor"/></svg>Talk to it yourself</button>
-        <a class="btn" href="#builds">See the builds</a>
-      </div>
-      <p class="fine">Willow &amp; Pine is a demo med spa. The receptionist's voice, the scheduling, the booking and the text confirmation are all the agent.</p>
+    <span class="eyebrow" data-h><i></i>White-label AI for agencies</span>
+    <h1><span data-h>Every call answered.</span><span class="blue" data-h>Every lead booked.</span></h1>
+    <p class="sub" data-h>Bazar builds AI receptionists, website chat agents and follow-up automations that you sell to service businesses. Fixed price, your brand, live in weeks.</p>
+    <div class="cta" data-h>
+      <button class="btn primary" type="button" id="heroPlay"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>Hear it take a call</button>
+      <button class="btn ghost" type="button" id="talkLive" hidden>Talk to it live</button>
+      <a class="btn ghost" href="#work">See the work</a>
     </div>
-    <div class="stage">
-      <div class="photo"><img src="assets/img/salon-night.jpg" alt="A salon window at night with a CLOSED sign hanging inside" width="2000" height="2000"></div>
-      <div class="call" id="heroCall">
-        <div class="call-head">
-          <button class="play" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button>
-          <div class="call-id"><b>Willow &amp; Pine front desk</b><span><i class="live"></i>Incoming call, 9:47 PM</span></div>
-          <span class="call-time" data-time>0:00</span>
+    <div class="chips" data-h><span>Voice receptionists</span><span>Website chat agents</span><span>Speed-to-lead</span><span>Missed-call text-back</span><span>Custom CRMs</span><span>Agent monitoring</span></div>
+  </div>
+
+  <div class="stage">
+    <div class="glow"></div>
+    <div class="phone" id="heroCall">
+      <div class="screen">
+        <div class="who">
+          <div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg></div>
+          <small>Willow &amp; Pine front desk</small>
+          <b>Ava, AI receptionist</b>
+          <span data-time>0:00</span>
         </div>
         <div class="wave" data-bar aria-hidden="true"></div>
         <ol class="lines" data-lines aria-live="polite"></ol>
-        <div class="booked" id="heroBooked" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z" fill="currentColor"/></svg><span id="heroBookedText"></span></div>
+        <div class="controls">
+          <button class="round go" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="float f1"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"/></svg></i><b>Answered on the first ring</b><span>9:47 PM, office closed</span></div>
+    <div class="float f2"><i class="green"><svg viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z" fill="#fff"/></svg></i><b>Booked: HydraFacial</b><span>Thursday 2:30 PM, text sent</span></div>
+    <div class="float f3"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-5 8-5s6.5 1 8 5"/></svg></i><b>New contact in the CRM</b><span>Tagged: facial lead, source phone</span></div>
+  </div>
+
+  <div class="marquee" aria-hidden="true"><div class="track">
+    <span>Answers every call</span><span>Books into the real calendar</span><span>Texts confirmations</span><span>Qualifies leads</span><span>Follows up in 60 seconds</span><span>Hands off to staff</span><span>Logs everything to the CRM</span>
+    <span>Answers every call</span><span>Books into the real calendar</span><span>Texts confirmations</span><span>Qualifies leads</span><span>Follows up in 60 seconds</span><span>Hands off to staff</span><span>Logs everything to the CRM</span>
+  </div></div>
+</header>
+
+<section class="chapter" id="how">
+  <div class="wrap">
+    <div class="center">
+      <p class="kicker" data-r>How it works</p>
+      <h2 class="h2" data-r>One phone call.<br>Five jobs done.</h2>
+      <p class="lede" data-r>Here is what a Bazar receptionist does in the minute a caller is on the line. No staff touched any of it.</p>
+    </div>
+    <div class="steps-wrap">
+      <div class="sticky">
+        <div class="phone"><div class="screen">
+          <div class="state on" data-state="1"><div class="ringing"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"/></svg></div><b>(737) 555-0192</b><span>Incoming call, 9:47 PM</span><p style="margin-top:26px;color:rgba(255,255,255,.75);font-size:15px">Answered by Ava in 1 ring</p></div></div>
+          <div class="state" data-state="2"><h4>Live transcript</h4>
+            <div class="bubble me">Hi, do you have anything for a HydraFacial this week?</div>
+            <div class="bubble">Oh, for sure. Let me take a look.</div>
+            <dl class="intent"><dt>Treatment</dt><dd>HydraFacial</dd><dt>When</dt><dd>This week</dd><dt>Price</dt><dd>$199, from the menu</dd></dl></div>
+          <div class="state" data-state="3"><h4>Calendar, Thursday</h4>
+            <div class="slots"><div class="slot taken"><span>12:00 PM</span><span>Booked</span></div><div class="slot taken"><span>1:30 PM</span><span>Booked</span></div><div class="slot pick"><span>2:30 PM</span><span>Open</span></div><div class="slot"><span>4:00 PM</span><span>Open</span></div><div class="slot taken"><span>5:00 PM</span><span>Booked</span></div></div></div>
+          <div class="state" data-state="4"><div class="confirm"><div class="ok"><svg width="40" height="40" viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z" fill="#fff"/></svg></div><b>Booked</b><span>HydraFacial, Thursday 2:30 PM</span><span>Ryan Patel, 60 minutes</span></div></div>
+          <div class="state" data-state="5"><h4>After the call</h4>
+            <div class="sms"><small>Text to caller</small>You're booked at Willow &amp; Pine for Thu 2:30 PM. Reply C to cancel.</div>
+            <div class="crm"><div><em>CRM contact</em><span>Ryan Patel</span></div><div><em>Tag</em><span>Facial lead</span></div><div><em>Source</em><span>Phone, after hours</span></div><div><em>Summary</em><span>Sent to owner</span></div></div></div>
+        </div></div>
+      </div>
+      <div class="steps">
+        <div class="step on" data-step="1"><span class="num">01</span><h3>Picks up on the first ring.</h3><p>Nights, weekends, mid-treatment. No voicemail and no hold music, so the caller never dials the next business on the list.</p></div>
+        <div class="step" data-step="2"><span class="num">02</span><h3>Understands what they want.</h3><p>Treatment, day, time and name come out of a normal conversation instead of a phone menu. Prices only ever come from the business's own list.</p></div>
+        <div class="step" data-step="3"><span class="num">03</span><h3>Checks the real calendar.</h3><p>It offers only times that are actually open, then re-checks the slot right before booking so two callers never land in the same chair.</p></div>
+        <div class="step" data-step="4"><span class="num">04</span><h3>Books it on the call.</h3><p>The appointment is in the calendar before the caller hangs up. Anything it shouldn't handle, like a medical question, goes to a person.</p></div>
+        <div class="step" data-step="5"><span class="num">05</span><h3>Follows up and logs it all.</h3><p>A confirmation text, a reminder the day before, a CRM contact with tags and a call summary for the owner.</p></div>
       </div>
     </div>
   </div>
-</header>
+</section>
 
-<section class="block" id="calls">
+<section class="mist center" id="calls">
   <div class="wrap">
-    <div class="head">
-      <h2>The calls that usually go wrong.</h2>
-      <p>Anyone can demo a happy-path booking. These are the calls that get AI receptionists fired: a caller fishing for a discount, a medical question, a slot that's already taken. The rules that handle them are checked in code, so no caller can talk the agent out of them.</p>
-    </div>
-    <div class="tabs" role="tablist">
+    <p class="kicker" data-r>Hear it</p>
+    <h2 class="h2" data-r>The calls that get<br>AI receptionists fired.</h2>
+    <p class="lede" data-r>Anyone can demo a happy-path booking. These are the hard ones. The rules that handle them are enforced in code, so no caller can talk the agent out of them.</p>
+    <div class="tabs" role="tablist" data-r>
       <button class="tab" role="tab" aria-selected="true" data-call="discount" type="button">Pushes for a discount</button>
       <button class="tab" role="tab" aria-selected="false" data-call="medical" type="button">Asks a medical question</button>
       <button class="tab" role="tab" aria-selected="false" data-call="booking" type="button">Books a facial</button>
     </div>
-    <div class="console" id="console">
-      <div class="left">
-        <div class="call-head">
-          <button class="play" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button>
-          <div class="call-id"><b id="consoleTitle">Caller wants a discount</b><span><i class="live"></i>Recorded demo call</span></div>
-          <span class="call-time" data-time>0:00</span>
+    <div class="console" id="console" data-r>
+      <div class="l">
+        <div class="ch">
+          <button class="round" type="button" data-play aria-label="Play the call"><svg class="tri" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg><svg class="pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z" fill="currentColor"/></svg></button>
+          <div><b id="consoleTitle">Caller wants a discount</b><span>Recorded demo call</span></div>
+          <time data-time>0:00</time>
         </div>
         <div class="wave" data-bar aria-hidden="true"></div>
         <ol class="lines" data-lines aria-live="polite"></ol>
       </div>
-      <div class="right">
-        <h3>What the agent did</h3>
+      <div class="r">
+        <h4>What the agent did</h4>
         <ul class="log" data-log></ul>
         <p class="why" id="why"></p>
       </div>
@@ -77,209 +124,172 @@
   </div>
 </section>
 
-<section class="block" id="math">
+<section class="center" id="work">
   <div class="wrap">
-    <div class="head">
-      <h2>What the unanswered calls cost.</h2>
-      <p>Put in a client's real numbers. This is the math I'd walk an owner through on a sales call, and you can use it on yours.</p>
+    <p class="kicker" data-r>Work</p>
+    <h2 class="h2" data-r>Don't take our word for it.<br>Click through it.</h2>
+    <p class="lede" data-r>Every build below is live. Each runs on a sample business so you can show a prospect before anyone signs. The real versions plug into the client's phone line, calendar, CRM and SMS.</p>
+    <div class="tiles">
+      <a class="tile wide" href="receptionist/" data-r><div class="txt"><span class="k">AI receptionist</span><h3>A front desk that never goes to voicemail.</h3><p>Answers, quotes from the real price list, books, texts the confirmation and logs the call. Discounts, medical questions and double-bookings are blocked in code.</p><span class="go">Listen to it ›</span></div><div class="shot"><img src="assets/shots/receptionist-v3.jpg" alt="The receptionist demo with a call playing and every action the agent took listed beside it" loading="lazy"></div></a>
+      <a class="tile" href="roofing/" data-r><div class="txt"><span class="k">Website chat agent</span><h3>Answers from the company's own playbook.</h3><p>Cites a source under every answer and says "I don't know" instead of guessing. Turns night visitors into booked inspections.</p><span class="go">Ask it something ›</span></div><div class="shot"><img src="assets/shots/roofing-crop.jpg" alt="Roofing site with the chat agent answering a hail damage question" loading="lazy"></div></a>
+      <a class="tile" href="speed-to-lead/" data-r><div class="txt"><span class="k">Speed-to-lead</span><h3>Every lead texted in under a minute.</h3><p>Cleaned, deduplicated, scored and routed. Hot leads page the on-call tech. Spam never reaches the CRM.</p><span class="go">Send a test lead ›</span></div><div class="shot"><img src="assets/shots/speed-to-lead-crop.jpg" alt="Lead pipeline runs with one lead's step-by-step results" loading="lazy"></div></a>
+      <a class="tile" href="text-back/" data-r><div class="txt"><span class="k">Missed-call text-back</span><h3>Missed the call. Booked the job anyway.</h3><p>Callers get a text within a minute and book by replying. Emergencies page the on-call plumber.</p><span class="go">Miss a call ›</span></div><div class="shot"><img src="assets/shots/text-back-crop.jpg" alt="Customer's phone with a text thread that ends in a booking" loading="lazy"></div></a>
+      <a class="tile" href="crm/" data-r><div class="txt"><span class="k">Custom CRM</span><h3>Move a deal. The follow-up schedules itself.</h3><p>Reminders, quote follow-ups and review requests fire from the stage a deal is in.</p><span class="go">Drag a deal ›</span></div><div class="shot"><img src="assets/shots/crm-crop.jpg" alt="CRM pipeline board with a customer's history" loading="lazy"></div></a>
+      <a class="tile wide" href="agent-ops/" data-r><div class="txt"><span class="k">Agent monitoring</span><h3>Know an agent broke before the client does.</h3><p>Every agent across every client in one view: volume, resolution rate, errors, cost and the questions it couldn't answer. One click writes the weekly client report.</p><span class="go">Open the dashboard ›</span></div><div class="shot"><img src="assets/shots/agent-ops-crop.jpg" alt="Dashboard of AI agents across six clients" loading="lazy"></div></a>
     </div>
+  </div>
+</section>
+
+<section class="mist center" id="cost">
+  <div class="wrap">
+    <p class="kicker" data-r>Missed-call math</p>
+    <h2 class="h2" data-r>What the unanswered<br>calls are costing.</h2>
+    <p class="lede" data-r>Put in a client's real numbers. It's the math to walk an owner through on a sales call.</p>
     <div class="calc">
-      <form class="card" id="calc" onsubmit="return false">
-        <div class="field"><label for="m-calls">Calls missed per week</label><output id="o-calls"></output><input type="range" id="m-calls" min="1" max="60" value="14"><small>After hours, during jobs, on lunch, on hold.</small></div>
+      <form class="card" id="calc" onsubmit="return false" data-r>
+        <div class="field"><label for="m-calls">Calls missed per week</label><output id="o-calls"></output><input type="range" id="m-calls" min="1" max="60" value="14"><small>After hours, during jobs, at lunch, on hold.</small></div>
         <div class="field"><label for="m-rate">Share that would have booked</label><output id="o-rate"></output><input type="range" id="m-rate" min="5" max="80" value="30"></div>
         <div class="field"><label for="m-value">Average first job value</label><output id="o-value"></output><input type="range" id="m-value" min="50" max="2000" step="10" value="220"></div>
-        <div class="field" style="margin-bottom:0"><label for="m-cost">Monthly cost of the agent</label><output id="o-cost"></output><input type="range" id="m-cost" min="100" max="1500" step="25" value="400"><small>Build amortized plus phone minutes and AI usage.</small></div>
+        <div class="field" style="margin-bottom:0"><label for="m-cost">Monthly cost of the receptionist</label><output id="o-cost"></output><input type="range" id="m-cost" min="100" max="1500" step="25" value="400"><small>Build amortized, plus phone minutes and AI usage.</small></div>
       </form>
-      <div class="card result" aria-live="polite">
+      <div class="card result" aria-live="polite" data-r>
         <div class="big" id="r-month">$0</div>
-        <p>in bookings walking to a competitor every month.</p>
-        <dl>
-          <dt>Missed bookings a month</dt><dd id="r-jobs"></dd>
-          <dt>Lost per year</dt><dd id="r-year"></dd>
-          <dt>Agent cost per year</dt><dd id="r-agent"></dd>
-          <dt>Pays for itself after</dt><dd id="r-pay"></dd>
-        </dl>
+        <p>in bookings going to a competitor every month.</p>
+        <dl><dt>Missed bookings a month</dt><dd id="r-jobs"></dd><dt>Lost per year</dt><dd id="r-year"></dd><dt>Receptionist cost per year</dt><dd id="r-agent"></dd><dt>Pays for itself in</dt><dd id="r-pay"></dd></dl>
       </div>
     </div>
   </div>
 </section>
 
-<section class="block" id="builds">
+<section class="center">
   <div class="wrap">
-    <div class="head">
-      <h2>More builds you can click through.</h2>
-      <p>Each one runs on a made-up business with sample data, so a prospect can try it before anyone signs anything. The real versions plug into the client's phone line, calendar, CRM and SMS.</p>
-    </div>
-    <div class="builds">
-      <article class="build">
-        <a class="frame" href="roofing/"><div class="chrome"><i></i><i></i><i></i><span>ridgeline-roofing (demo)</span></div><img src="assets/shots/roofing-crop.jpg" alt="Roofing company website with the chat assistant answering a hail damage question and citing its source" loading="lazy"></a>
-        <div><span class="kind">Website chat agent</span><h3>Answers from the company's own playbook. Says "I don't know" when it should.</h3>
-          <p>A roofer's site assistant that cites the source under every answer, refuses to promise insurance outcomes and turns night-time visitors into booked inspections.</p>
-          <p class="result-line">Ask it about solar panels. It won't make something up.</p>
-          <a class="try" href="roofing/">Try the chat agent</a></div>
-      </article>
-      <article class="build">
-        <a class="frame" href="speed-to-lead/"><div class="chrome"><i></i><i></i><i></i><span>cooper-air lead pipeline (demo)</span></div><img src="assets/shots/speed-to-lead-crop.jpg" alt="Lead pipeline run history with a hot lead's step-by-step results and the text it received" loading="lazy"></a>
-        <div><span class="kind">Speed-to-lead automation</span><h3>Every lead texted in under a minute. Spam never reaches the CRM.</h3>
-          <p>Leads from Google, Facebook, Angi and the website get cleaned, deduplicated, checked against the service area, scored and texted. Hot ones page the on-call tech.</p>
-          <p class="result-line">Send it a fake lead and watch all nine steps run.</p>
-          <a class="try" href="speed-to-lead/">Send a test lead</a></div>
-      </article>
-      <article class="build">
-        <a class="frame" href="text-back/"><div class="chrome"><i></i><i></i><i></i><span>pecan-street text-back (demo)</span></div><img src="assets/shots/text-back-crop.jpg" alt="A customer's phone showing a missed-call text thread that ends in a booked appointment" loading="lazy"></a>
-        <div><span class="kind">Missed-call text-back</span><h3>The plumber can't pick up. The caller gets a text in 60 seconds anyway.</h3>
-          <p>Missed callers can book by replying. Emergencies page the on-call plumber, quiet hours hold the rest until 8am, and every finished job gets a review request.</p>
-          <p class="result-line">Calls that went to a competitor become jobs booked by text.</p>
-          <a class="try" href="text-back/">Miss a call</a></div>
-      </article>
-      <article class="build">
-        <a class="frame" href="crm/"><div class="chrome"><i></i><i></i><i></i><span>cooper-air crm (demo)</span></div><img src="assets/shots/crm-crop.jpg" alt="CRM pipeline board with a customer's history and a drafted follow-up text" loading="lazy"></a>
-        <div><span class="kind">Custom CRM</span><h3>Move a deal, and the right follow-up schedules itself.</h3>
-          <p>A pipeline built around how a home-service company actually sells: visit reminders, quote follow-ups, review requests and win-back campaigns fire from the stage a deal is in.</p>
-          <p class="result-line">Overdue follow-ups turn red before a deal goes cold.</p>
-          <a class="try" href="crm/">Drag a deal</a></div>
-      </article>
-      <article class="build">
-        <a class="frame" href="agent-ops/"><div class="chrome"><i></i><i></i><i></i><span>agent operations (demo)</span></div><img src="assets/shots/agent-ops-crop.jpg" alt="Dashboard of AI agents across six clients with status, volume, resolution rate and cost" loading="lazy"></a>
-        <div><span class="kind">Agent monitoring for agencies</span><h3>Know an agent broke before your client does.</h3>
-          <p>Every agent across every client in one view: volume, how much it handled alone, errors, cost and the questions it couldn't answer. One click writes the weekly client report.</p>
-          <p class="result-line">Built on the same approach as the monitoring platform I built at Fidelity.</p>
-          <a class="try" href="agent-ops/">Open the dashboard</a></div>
-      </article>
+    <p class="kicker" data-r>Who builds it</p>
+    <h2 class="h2" data-r>Enterprise engineering.<br>Agency speed.</h2>
+    <p class="lede" data-r>Bazar is run by Arav Bazar, a full-stack engineer in Austin. You work with the person writing the code, from the scope call to the handoff.</p>
+    <div class="proof">
+      <div class="card" data-r><span class="org">Fidelity Investments</span><span class="stat"><span data-count="5">5</span> databases</span><b>Built an internal observability platform</b><p>A self-hosted alternative to Datadog on the Enterprise Data &amp; AI team, adopted by the database platform team. OpenTelemetry, Python and React.</p></div>
+      <div class="card" data-r><span class="org">Cove Events</span><span class="stat"><span data-count="10000">10,000</span>+ users</span><b>Ships features for a live iOS app</b><p>Swift and UIKit work on a campus events app used across five Texas universities.</p></div>
+      <div class="card" data-r><span class="org">Independent</span><span class="stat">24/7</span><b>Runs an autonomous trading system</b><p>Prices live events from real-time data, trades on a regulated event-contract exchange only when the edge clears fees, and halts itself at a daily loss limit.</p></div>
     </div>
   </div>
 </section>
 
-<section class="block" id="background">
+<section class="mist">
   <div class="wrap">
-    <div class="head">
-      <h2>Where I learned to build things that stay up.</h2>
-      <p>Real work, not demos. Austin, TX. AWS Certified Cloud Practitioner.</p>
-    </div>
-    <div class="rows">
-      <div class="row"><div><b>Fidelity Investments</b><span class="role">Software engineering intern, Enterprise Data &amp; AI</span></div><p>Built an internal observability platform (OpenTelemetry, Python/FastAPI, React/TypeScript) as a self-hosted alternative to Datadog, adopted by the database platform team. Wrote a custom Prometheus exporter for PostgreSQL and co-presented a monitoring recommendation across five database engines.</p><span class="when">2026</span></div>
-      <div class="row"><div><b>Cove Events</b><span class="role">Software engineer</span></div><p>Ships Swift/UIKit features for a campus events iOS app with 10,000+ users across five Texas universities.</p><span class="when">Now</span></div>
-      <div class="row"><div><b>AI Study Assistant</b><span class="role">Personal project</span></div><p>Turns PDFs, notes and URLs into chat, flashcards and quizzes with a RAG pipeline on pgvector. The same retrieval pattern runs the roofing chat agent. <a href="https://github.com/aravbazar/studyai">Source on GitHub</a>.</p><span class="when">2026</span></div>
-      <div class="row"><div><b>Autonomous trading agent</b><span class="role">Personal project</span></div><p>Python agent that matches live sports data to prediction markets and trades every 30 minutes on its own, with position caps, a daily-loss halt and calibration reports.</p><span class="when">2026</span></div>
-      <div class="row"><div><b>Epic Estates</b><span class="role">Software engineering intern</span></div><p>Full-stack real estate management app on Node.js and MongoDB. Indexing and caching improved database efficiency 40% and cut page loads by 1.5 seconds.</p><span class="when">2025</span></div>
+    <div class="center"><p class="kicker" data-r>Process</p><h2 class="h2" data-r>From brief to live in weeks.</h2></div>
+    <div class="process">
+      <div data-r><span class="n">Step 1</span><b>Scope call</b><p>You bring the client's problem. You leave with a written scope, one fixed price and a delivery date.</p></div>
+      <div data-r><span class="n">Step 2</span><b>Build</b><p>Built white-label under your agency. Progress updates written so you can forward them as is.</p></div>
+      <div data-r><span class="n">Step 3</span><b>Test and launch</b><p>Tested on real and off-script calls before it goes live, with logging and failure alerts on day one.</p></div>
+      <div data-r><span class="n">Step 4</span><b>Support</b><p>30 days of fixes and tuning included, then an optional monthly care plan.</p></div>
     </div>
   </div>
 </section>
 
-<section class="block">
+<section id="faq">
   <div class="wrap">
-    <div class="head"><h2>How it works with agencies.</h2><p>You sell it, I build it, your client never sees my name.</p></div>
-    <div class="work">
-      <div><b>Free scope call</b><p>Bring the client's problem. You get a written scope with one fixed price and a delivery date.</p></div>
-      <div><b>Your brand</b><p>Built white-label under your agency. I'll join a sales call as your engineer if it helps close.</p></div>
-      <div><b>You own it</b><p>Code, repos and platform accounts live in your or your client's name from day one.</p></div>
-      <div><b>It stays up</b><p>Every build ships with logging and failure alerts, plus 30 days of fixes and tuning.</p></div>
+    <div class="center"><h2 class="h2" data-r>Questions.</h2></div>
+    <div class="faq">
+      <details><summary>Will my client see your name?</summary><p>No. Everything is built under your agency's brand, and you keep the client relationship. I can join a sales or kickoff call as your engineer if that helps you close.</p></details>
+      <details><summary>How does pricing work?</summary><p>One fixed price after a free scope call: 50% to start, 50% at launch. Phone minutes, AI usage and hosting are billed by those platforms directly to you or your client, and I estimate them up front.</p></details>
+      <details><summary>How long does a build take?</summary><p>Receptionists, chat agents and automations usually take one to two weeks. Custom CRMs and web apps take three to six. A working demo for a prospect takes about three business days.</p></details>
+      <details><summary>Who owns the code and accounts?</summary><p>You do. Repos and platform accounts are set up in your or your client's name from day one, with handoff docs.</p></details>
+      <details><summary>What if the AI says something wrong?</summary><p>Hard rules like prices, discounts and medical questions are checked in code, not just in the prompt. When it's unsure, it hands off to a person, and every call is logged so problems get fixed from real data.</p></details>
     </div>
   </div>
 </section>
 
-<section class="closing">
-  <img src="assets/img/shop-night.jpg" alt="" loading="lazy">
+<section class="final">
   <div class="wrap">
-    <h2>Got a client who keeps missing calls?</h2>
-    <p>Send me the brief. I'll reply within 24 hours with how I'd build it and what it would cost.</p>
-    <div class="actions">
-      <a class="btn lamp" href="https://frontrunners.si/developers/arav-bazar">Message me on AI Frontrunners</a>
-      <button class="copy" type="button" data-copy="aravbazar07@gmail.com">aravbazar07@gmail.com</button>
-    </div>
+    <h2 class="h2" data-r>Have a client<br>who needs this?</h2>
+    <p class="lede" data-r>Send the brief. You'll get a reply within 24 hours with how I'd build it and what it would cost.</p>
+    <div class="cta" data-r><a class="btn primary" href="https://frontrunners.si/developers/arav-bazar">Message me on AI Frontrunners</a></div>
+    <div class="mail" data-r><span id="mailAddr">aravbazar07@gmail.com</span><button type="button" id="copyMail">Copy</button></div>
   </div>
 </section>
-
 <footer><div class="wrap">
-  <span>Arav Bazar, Austin TX. Demo businesses are fictional. Photos from Unsplash.</span>
+  <span>© 2026 Bazar, Austin TX. Demo businesses are fictional.</span>
   <nav><a href="https://github.com/aravbazar">GitHub</a><a href="https://linkedin.com/in/b-arav">LinkedIn</a><a href="https://frontrunners.si/developers/arav-bazar">AI Frontrunners</a></nav>
 </div></footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="assets/call-player.js"></script>
 <script>
-// Fill this in once the ElevenLabs agent exists; the "Talk to it yourself" button stays hidden until then.
 const ELEVEN_AGENT_ID = "";
-
 (async () => {
   const $ = id => document.getElementById(id);
-  // Hero call
-  const hero = await CallPlayer($("heroCall"), {
-    src: "assets/calls/booking", names: { a: "Ava, receptionist", c: "Caller" }, seed: 11,
-    onTime(t, data) {
-      const b = data.lines.find(l => l.tool && l.tool.t === "book_appointment");
-      const show = b && t >= b.start + 2;
-      if (show && $("heroBooked").hidden) { $("heroBookedText").textContent = "Booked: HydraFacial, Thursday 2:30 PM. Confirmation texted."; $("heroBooked").hidden = false; $("heroBooked").classList.add("pop"); }
-      if (!show) $("heroBooked").hidden = true;
-    }
-  });
-  $("heroPlay").onclick = () => {
-    $("heroCall").querySelector("[data-play]").click();
-    if (window.innerWidth < 960) $("heroCall").scrollIntoView({ behavior: "smooth", block: "center" });
-  };
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Hard calls console
+  // ---- Motion ----
+  if (window.gsap && !reduce) {
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from("[data-h]", { y: 36, opacity: 0, duration: 1, ease: "power3.out", stagger: .09, delay: .05 });
+    gsap.fromTo(".stage .phone", { scale: .84, y: 80 }, { scale: 1, y: 0, ease: "none", scrollTrigger: { trigger: ".stage", start: "top 95%", end: "top 25%", scrub: .6 } });
+    gsap.from(".float", { opacity: 0, y: 30, scale: .92, duration: .9, ease: "back.out(1.6)", stagger: .25, scrollTrigger: { trigger: ".stage", start: "top 45%" } });
+    gsap.to(".stage .glow", { scale: 1.25, opacity: .7, ease: "none", scrollTrigger: { trigger: ".stage", start: "top bottom", end: "bottom top", scrub: true } });
+    gsap.utils.toArray("[data-r]").forEach(el => gsap.from(el, { y: 44, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } }));
+    gsap.utils.toArray("[data-count]").forEach(el => {
+      const end = +el.dataset.count; const o = { v: 0 };
+      gsap.to(o, { v: end, duration: 1.6, ease: "power2.out", scrollTrigger: { trigger: el, start: "top 90%" }, onUpdate: () => el.textContent = Math.round(o.v).toLocaleString() });
+    });
+  }
+
+  // ---- Scroll-driven chapter: highlight the step in the middle of the screen, swap the phone state ----
+  const steps = [...document.querySelectorAll(".step")];
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const n = e.target.dataset.step;
+    steps.forEach(s => s.classList.toggle("on", s === e.target));
+    document.querySelectorAll("[data-state]").forEach(s => s.classList.toggle("on", s.dataset.state === n));
+  }), { rootMargin: "-45% 0px -45% 0px" });
+  steps.forEach(s => io.observe(s));
+
+  // ---- Hero call ----
+  const hero = await CallPlayer($("heroCall"), { src: "assets/calls/booking", names: { a: "Ava (AI)", c: "Caller" }, seed: 11 });
+  $("heroPlay").onclick = () => { $("heroCall").querySelector("[data-play]").click(); $("heroCall").scrollIntoView({ behavior: "smooth", block: "center" }); };
+
+  // ---- Hard calls ----
   const WHY = {
-    discount: "Discounts and price changes aren't the model's call. The booking tool rejects any price that isn't on the spa's list, so even a perfectly persuasive caller gets the same polite answer.",
-    medical: "Anything that sounds medical routes to a person. The agent creates a callback task for the nurse injector instead of guessing.",
-    booking: "Slots are re-checked right before the booking is written, so two callers can never land in the same chair."
+    discount: "Discounts aren't the model's decision. The booking tool only accepts prices from the business's list, so a persuasive caller still gets the same answer.",
+    medical: "Anything that sounds medical goes to a person. The agent creates a callback task for the nurse injector instead of guessing.",
+    booking: "The slot is re-checked right before the booking is written, so two callers can never land in the same chair."
   };
-  const TITLES = { discount: "Caller wants a discount", medical: "Caller asks if Botox is safe while breastfeeding", booking: "Caller books a HydraFacial" };
+  const TITLES = { discount: "Caller wants a discount", medical: "Caller asks a medical question", booking: "Caller books a HydraFacial" };
   let current = null;
   async function load(name) {
     if (current) current.reset();
     CallPlayer.stopOthers(null);
-    const el = $("console");
-    const fresh = el.cloneNode(true); el.replaceWith(fresh);
+    const el = $("console"); const fresh = el.cloneNode(true); fresh.style.cssText = ""; el.replaceWith(fresh);
     fresh.querySelector("[data-bar]").innerHTML = "";
-    $("consoleTitle").textContent = TITLES[name];
-    $("why").textContent = WHY[name];
+    $("consoleTitle").textContent = TITLES[name]; $("why").textContent = WHY[name];
     current = await CallPlayer(fresh, { src: "assets/calls/" + name, names: { a: "Ava, receptionist", c: "Caller" }, seed: name.length * 7 });
   }
   document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t));
-    load(t.dataset.call);
+    document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t)); load(t.dataset.call);
   }));
   load("discount");
 
-  // Missed-call math
+  // ---- Missed-call math ----
   const money = n => "$" + Math.round(n).toLocaleString();
   function calc() {
     const c = +$("m-calls").value, r = +$("m-rate").value / 100, v = +$("m-value").value, cost = +$("m-cost").value;
     $("o-calls").textContent = c; $("o-rate").textContent = Math.round(r * 100) + "%"; $("o-value").textContent = money(v); $("o-cost").textContent = money(cost);
     const jobs = c * r * 52 / 12, month = jobs * v;
-    $("r-month").textContent = money(month);
-    $("r-jobs").textContent = jobs.toFixed(1);
-    $("r-year").textContent = money(month * 12);
-    $("r-agent").textContent = money(cost * 12);
+    $("r-month").textContent = money(month); $("r-jobs").textContent = jobs.toFixed(1); $("r-year").textContent = money(month * 12); $("r-agent").textContent = money(cost * 12);
     const days = month > 0 ? cost / (month / 30) : Infinity;
-    $("r-pay").textContent = days < 1 ? "less than a day" : days > 60 ? "more than two months" : Math.ceil(days) + " days";
+    $("r-pay").textContent = days < 1 ? "under a day" : days > 60 ? "over two months" : Math.ceil(days) + " days";
   }
-  ["m-calls", "m-rate", "m-value", "m-cost"].forEach(id => $(id).addEventListener("input", calc));
-  calc();
+  ["m-calls", "m-rate", "m-value", "m-cost"].forEach(id => $(id).addEventListener("input", calc)); calc();
 
-  // Copy email
-  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
-    const t = b.textContent;
-    try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copied"; } catch (e) { b.textContent = b.dataset.copy; }
-    setTimeout(() => b.textContent = t, 1500);
-  }));
+  $("copyMail").onclick = async () => { try { await navigator.clipboard.writeText($("mailAddr").textContent); $("copyMail").textContent = "Copied"; } catch (e) { const r = document.createRange(); r.selectNodeContents($("mailAddr")); getSelection().removeAllRanges(); getSelection().addRange(r); } setTimeout(() => $("copyMail").textContent = "Copy", 1500); };
 
-  // Live voice agent (ElevenLabs widget), loaded only when an agent id is set.
+  // ---- Live agent (ElevenLabs), shown once an agent id is set ----
   if (ELEVEN_AGENT_ID) {
-    const w = document.createElement("elevenlabs-convai");
-    w.setAttribute("agent-id", ELEVEN_AGENT_ID);
-    document.body.appendChild(w);
-    const s = document.createElement("script");
-    s.src = "https://unpkg.com/@elevenlabs/convai-widget-embed"; s.async = true;
-    document.body.appendChild(s);
+    const w = document.createElement("elevenlabs-convai"); w.setAttribute("agent-id", ELEVEN_AGENT_ID); document.body.appendChild(w);
+    const s = document.createElement("script"); s.src = "https://unpkg.com/@elevenlabs/convai-widget-embed"; s.async = true; document.body.appendChild(s);
     $("talkLive").hidden = false;
-    $("talkLive").onclick = () => {
-      CallPlayer.stopOthers(null);
-      const el = document.querySelector("elevenlabs-convai");
-      const root = el && el.shadowRoot;
-      const start = root && [...root.querySelectorAll("button")].find(b => /start|call|talk/i.test(b.textContent + b.getAttribute("aria-label")));
-      if (start) start.click(); else el && el.scrollIntoView({ behavior: "smooth", block: "end" });
-    };
+    $("talkLive").onclick = () => { CallPlayer.stopOthers(null); const r = w.shadowRoot; const b = r && [...r.querySelectorAll("button")].find(x => /start|call|talk/i.test(x.textContent + (x.getAttribute("aria-label") || ""))); if (b) b.click(); };
   }
 })();
 </script>

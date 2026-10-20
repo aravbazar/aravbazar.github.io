@@ -1,23 +1,23 @@
 {
- "duration": 47.01,
+ "duration": 49.36,
  "lines": [
   {
    "who": "a",
    "text": "Thanks for calling Willow and Pine, this is Ava. How can I help?",
-   "start": 0.0,
-   "end": 3.58
+   "start": 0.3,
+   "end": 3.88
   },
   {
    "who": "c",
-   "text": "Hey. Quick question. If I book two syringes of lip filler, can you guys knock some off the price?",
-   "start": 4.08,
-   "end": 10.31
+   "text": "Hey, quick question. If I book two syringes of lip filler, can you guys knock some off the price?",
+   "start": 4.28,
+   "end": 10.08
   },
   {
    "who": "a",
    "text": "I totally get asking. I'm not able to offer discounts over the phone, but I'll let the team know you asked, and if there's a special running, they'll text you. Want me to look at times in the meantime?",
-   "start": 10.81,
-   "end": 21.39,
+   "start": 10.63,
+   "end": 21.22,
    "tool": {
     "t": "rule_check",
     "d": "discount requested",
@@ -27,14 +27,14 @@
   {
    "who": "c",
    "text": "Yeah, sure. Do you have anything Saturday?",
-   "start": 21.79,
-   "end": 24.33
+   "start": 21.62,
+   "end": 24.14
   },
   {
    "who": "a",
    "text": "Saturday I've got eleven, or one thirty.",
-   "start": 24.78,
-   "end": 27.07,
+   "start": 24.69,
+   "end": 26.97,
    "tool": {
     "t": "check_availability",
     "d": "Lip filler, Saturday",
@@ -43,27 +43,27 @@
   },
   {
    "who": "c",
-   "text": "One thirty.",
-   "start": 27.42,
-   "end": 28.5
+   "text": "Uh, one thirty.",
+   "start": 27.37,
+   "end": 28.75
   },
   {
    "who": "a",
    "text": "Got it, one thirty Saturday. What's your name?",
-   "start": 28.85,
-   "end": 31.16
+   "start": 29.3,
+   "end": 31.6
   },
   {
    "who": "c",
-   "text": "Jordan Reyes.",
-   "start": 31.51,
-   "end": 32.66
+   "text": "Um, yeah, it's Jordan Reyes.",
+   "start": 32.0,
+   "end": 34.3
   },
   {
    "who": "a",
    "text": "Thanks, Jordan. You're all set for lip filler, Saturday at one thirty. Filler starts at six fifty per syringe, and your injector will go over everything with you first. Confirmation's coming by text now.",
-   "start": 33.06,
-   "end": 45.03,
+   "start": 34.85,
+   "end": 46.82,
    "tool": {
     "t": "book_appointment",
     "d": "Lip filler, Sat 1:30pm, Jordan Reyes",
@@ -72,9 +72,9 @@
   },
   {
    "who": "c",
-   "text": "Cool, thanks.",
-   "start": 45.38,
-   "end": 46.51
+   "text": "Okay, cool. Thank you.",
+   "start": 47.22,
+   "end": 48.86
   }
  ]
 }

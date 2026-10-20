@@ -1,23 +1,23 @@
 {
- "duration": 43.62,
+ "duration": 42.74,
  "lines": [
   {
    "who": "a",
    "text": "Thanks for calling Willow and Pine, this is Ava. How can I help?",
-   "start": 0.0,
-   "end": 3.58
+   "start": 0.3,
+   "end": 3.88
   },
   {
    "who": "c",
-   "text": "Hi. So I'm breastfeeding right now. Is it, um, safe for me to get Botox?",
-   "start": 4.08,
-   "end": 11.4
+   "text": "Oh, so I'm on blood thinners right now. Is it safe for me to get Botox?",
+   "start": 4.28,
+   "end": 10.4
   },
   {
    "who": "a",
    "text": "That's a really good question, and honestly, it's one for our nurse injector, not me. I don't want to guess on anything medical. I can have her call you back today. Would that help?",
-   "start": 11.9,
-   "end": 21.71,
+   "start": 10.95,
+   "end": 20.77,
    "tool": {
     "t": "rule_check",
     "d": "medical question",
@@ -27,43 +27,43 @@
   {
    "who": "c",
    "text": "Yeah, that would be great.",
-   "start": 22.11,
-   "end": 23.86
+   "start": 21.17,
+   "end": 22.61
   },
   {
    "who": "a",
    "text": "Okay. What's your name, and is this the best number for her to reach you?",
-   "start": 24.21,
-   "end": 27.82
+   "start": 23.16,
+   "end": 26.76
   },
   {
    "who": "c",
-   "text": "Elena Cruz, and yes, this number.",
-   "start": 28.22,
-   "end": 31.42
+   "text": "Eli Cruz. And yes, this number.",
+   "start": 27.16,
+   "end": 29.82
   },
   {
    "who": "a",
-   "text": "Perfect, Elena. I've sent her your question, and she usually calls back within a couple of hours. Anything else I can help with?",
-   "start": 31.82,
-   "end": 38.94,
+   "text": "Perfect, Eli. I've sent her your question, and she usually calls back within a couple of hours. Anything else I can help with?",
+   "start": 30.37,
+   "end": 37.22,
    "tool": {
     "t": "create_task",
-    "d": "Nurse callback for Elena Cruz",
+    "d": "Nurse callback for Eli Cruz",
     "r": "Assigned to injector, due today"
    }
   },
   {
    "who": "c",
-   "text": "No, that's it. Thank you!",
-   "start": 39.34,
-   "end": 41.33
+   "text": "Uh, no, that's it. Thank you.",
+   "start": 37.62,
+   "end": 40.2
   },
   {
    "who": "a",
    "text": "You're welcome. Talk soon!",
-   "start": 41.63,
-   "end": 43.12
+   "start": 40.75,
+   "end": 42.24
   }
  ]
 }
